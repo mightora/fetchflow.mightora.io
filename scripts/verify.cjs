@@ -9,6 +9,8 @@ const JSZip=require('../vendor/jszip.min.js');
  assert(!/<script[^>]+src=/i.test(offline),'Offline must not load remote scripts');
  assert(!/<link[^>]+rel="stylesheet"[^>]+href="https?:/i.test(offline),'Offline must not load remote stylesheets');
  assert(!/<img[^>]+src="https?:/i.test(offline),'Offline must not load remote image assets');
+ assert(!offline.includes('class="live-badge"'),'Offline build must omit dynamic GitHub badges');
+ for(const name of ['ci','codeql','pages']) assert(online.includes('/actions/workflows/'+name+'.yml/badge.svg?branch=main'),'Online workflow badge missing: '+name);
  assert(online.includes('mightora-header')&&online.includes('mightora-footer')&&online.includes('mightora-author'));
  assert(online.includes('mightora/shared-ui@main/shared.css'));
  assert(online.includes('mightora/shared-ui@main/components.js'));

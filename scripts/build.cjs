@@ -27,6 +27,8 @@ function assemble(offline){
  html=html.replace('<!--BRAND_STYLE-->',offline?'':`<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/mightora/shared-ui@main/shared.css" />`);
  if(offline){
   html=html.replace('<!--FOOTER_PATCH-->','');
+  // Offline edition must never fetch live CI badges: status is only verifiable online.
+  html=html.replace(/<img\s+class="live-badge"[^>]*>/gi,'');
   html=html.replace(/<!--ONLINE_HEADER_START-->[\s\S]*?<!--ONLINE_HEADER_END-->/,'');
   html=html.replace('<!--OFFLINE_HEADER-->',`<header class="top-fallback"><div class="container"><a href="#workspace" aria-label="Mightora FetchFlow"><img src="${logo}" alt="Mightora" width="180" height="40" class="header-logo" /></a><nav aria-label="Main navigation"><a href="#workspace">Editor</a><a href="#diagrams">Diagrams</a><a href="#exports">Exports</a></nav></div></header>`);
   html=html.replace(/<!--ONLINE_FOOTER_START-->[\s\S]*?<!--ONLINE_FOOTER_END-->/,'');
