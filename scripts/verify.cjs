@@ -1,0 +1,25 @@
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
+const JSZip=require('../vendor/jszip.min.js');
+(async()=>{
+ const dist=path.join(__dirname,'../dist');
+ const offline=fs.readFileSync(path.join(dist,'offline/index.html'),'utf8');
+ const online=fs.readFileSync(path.join(dist,'index.html'),'utf8');
+ assert(offline.includes('Offline Edition – No Internet Connection Required'));
+ assert(offline.includes("connect-src 'none'"));
+ assert(!/<script[^>]+src=/i.test(offline),'Offline must not load remote scripts');
+ assert(!/<link[^>]+rel="stylesheet"[^>]+href="https?:/i.test(offline),'Offline must not load remote stylesheets');
+ assert(!/<img[^>]+src="https?:/i.test(offline),'Offline must not load remote image assets');
+ assert(online.includes('mightora-header')&&online.includes('mightora-footer')&&online.includes('mightora-author'));
+ assert(online.includes('mightora/shared-ui@main/shared.css'));
+ assert(online.includes('mightora/shared-ui@main/components.js'));
+ assert(online.indexOf('js-yaml.min.js')<online.indexOf('shared-ui@main/components.js'));
+ assert(online.indexOf('class="badges"')<online.indexOf('<mightora-footer>'));
+ const m=offline.match(/<script>([\s\S]*?)<\/script>/),csp=offline.match(/script-src 'sha256-([^']+)'/);
+ assert(m&&csp);
+ const digest=crypto.createHash('sha256').update(m[1]).digest('base64');
+ assert.equal(csp[1],digest,'CSP must match bundled inline JavaScript');
+ const zip=new JSZip();await zip.loadAsync(fs.readFileSync(path.join(dist,'downloads/Mightora-FetchFlow-Offline.zip')));
+ assert.equal(await zip.file('index.html').async('string'),offline,'Offline ZIP must exactly match HTML release');
+ for(const p of ['README.txt','LICENSE']) assert(zip.file(p));
+ console.log('✓ Both editions, branding components, CSP hashes and ZIP/HTML parity verified');
+})();

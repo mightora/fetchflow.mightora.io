@@ -1,0 +1,26 @@
+[
+  {
+    "id":"contacts","name":"01 · Basic contact search","description":"A simple starting table, selected fields, filters and sort order.",
+    "xml":"<fetch top=\"50\">\n  <entity name=\"contact\">\n    <attribute name=\"fullname\" />\n    <attribute name=\"emailaddress1\" />\n    <attribute name=\"createdon\" />\n    <filter type=\"and\">\n      <condition attribute=\"statecode\" operator=\"eq\" value=\"0\" />\n      <condition attribute=\"emailaddress1\" operator=\"not-null\" />\n    </filter>\n    <order attribute=\"fullname\" descending=\"false\" />\n  </entity>\n</fetch>"
+  },
+  {
+    "id":"account-contact","name":"02 · Account to primary contact","description":"An inner join showing where a related contact field comes from.",
+    "xml":"<fetch top=\"100\">\n  <entity name=\"account\">\n    <attribute name=\"name\" />\n    <attribute name=\"accountnumber\" />\n    <link-entity name=\"contact\" from=\"contactid\" to=\"primarycontactid\" link-type=\"inner\" alias=\"primarycontact\">\n      <attribute name=\"fullname\" alias=\"primary_contact_name\" />\n      <attribute name=\"emailaddress1\" />\n      <filter><condition attribute=\"statecode\" operator=\"eq\" value=\"0\" /></filter>\n    </link-entity>\n    <order attribute=\"name\" />\n  </entity>\n</fetch>"
+  },
+  {
+    "id":"cases","name":"03 · Case and customer relationships","description":"Two relationships, an OR group inside an AND filter, and recent cases.",
+    "xml":"<fetch top=\"100\">\n  <entity name=\"incident\">\n    <attribute name=\"ticketnumber\" />\n    <attribute name=\"title\" />\n    <attribute name=\"createdon\" />\n    <filter type=\"and\">\n      <condition attribute=\"createdon\" operator=\"last-x-days\" value=\"30\" />\n      <filter type=\"or\">\n        <condition attribute=\"prioritycode\" operator=\"eq\" value=\"1\" />\n        <condition attribute=\"prioritycode\" operator=\"eq\" value=\"2\" />\n      </filter>\n    </filter>\n    <link-entity name=\"account\" from=\"accountid\" to=\"customerid\" link-type=\"outer\" alias=\"customer\">\n      <attribute name=\"name\" alias=\"customer_name\" />\n    </link-entity>\n    <link-entity name=\"systemuser\" from=\"systemuserid\" to=\"owninguser\" link-type=\"outer\" alias=\"owner\">\n      <attribute name=\"fullname\" alias=\"owner_name\" />\n    </link-entity>\n    <order attribute=\"createdon\" descending=\"true\" />\n  </entity>\n</fetch>"
+  },
+  {
+    "id":"aggregate","name":"04 · Revenue by owner","description":"Aggregate and group-by source fields for reporting.",
+    "xml":"<fetch aggregate=\"true\">\n  <entity name=\"opportunity\">\n    <attribute name=\"ownerid\" alias=\"owner\" groupby=\"true\" />\n    <attribute name=\"estimatedvalue\" alias=\"pipeline_total\" aggregate=\"sum\" />\n    <attribute name=\"opportunityid\" alias=\"opportunity_count\" aggregate=\"count\" />\n    <filter><condition attribute=\"statecode\" operator=\"eq\" value=\"0\" /></filter>\n    <order alias=\"pipeline_total\" descending=\"true\" />\n  </entity>\n</fetch>"
+  },
+  {
+    "id":"unmatched","name":"05 · Accounts without contacts","description":"Outer join with a post-join null condition; illustrates filtering after a link.",
+    "xml":"<fetch distinct=\"true\">\n  <entity name=\"account\">\n    <attribute name=\"name\" />\n    <link-entity name=\"contact\" from=\"parentcustomerid\" to=\"accountid\" link-type=\"outer\" alias=\"c\">\n      <attribute name=\"contactid\" />\n    </link-entity>\n    <filter><condition entityname=\"c\" attribute=\"contactid\" operator=\"null\" /></filter>\n  </entity>\n</fetch>"
+  },
+  {
+    "id":"multihop","name":"06 · Three-level relationship","description":"A multi-hop relationship across accounts, contacts and activities.",
+    "xml":"<fetch top=\"200\">\n  <entity name=\"account\">\n    <attribute name=\"name\" />\n    <link-entity name=\"contact\" from=\"parentcustomerid\" to=\"accountid\" link-type=\"inner\" alias=\"contact\">\n      <attribute name=\"fullname\" />\n      <link-entity name=\"task\" from=\"regardingobjectid\" to=\"contactid\" link-type=\"outer\" alias=\"task\">\n        <attribute name=\"subject\" />\n        <attribute name=\"scheduledend\" />\n      </link-entity>\n    </link-entity>\n  </entity>\n</fetch>"
+  }
+]

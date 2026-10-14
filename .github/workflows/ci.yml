@@ -1,0 +1,52 @@
+name: Build and tests
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Node setup
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: npm install --no-fund
+      - name: Check JavaScript syntax
+        run: |
+          node --check src/model.js
+          node --check src/diagrams.js
+          node --check src/exports.js
+          node --check src/app.js
+          node --check scripts/build.cjs
+      - name: Unit tests
+        run: npm test
+      - name: Download official brand assets
+        run: |
+          mkdir -p assets
+          curl --fail --location --retry 3 'https://raw.githubusercontent.com/mightora/mightora.io/main/static/images/mightoraIoLogo4-200x900.png' -o assets/mightora-logo.png
+          curl --fail --location --retry 3 'https://techtweedie.github.io/images/author/ian-tweedie-sq2_hu_a380911c6f4726de.png' -o assets/author-avatar.png
+          curl --fail --location --retry 3 'https://raw.githubusercontent.com/TechTweedie/techtweedie.github.io/v2/assets/images/site/main-logo.png' -o assets/author-blog-logo.png
+      - name: Production build
+        run: REQUIRE_BRAND_ASSETS=1 npm run build
+      - name: Check offline integrity and export package parity
+        run: node scripts/verify.cjs
+      - name: Install Chromium for browser tests
+        run: npx playwright install --with-deps chromium
+      - name: Test diagrams, local execution and editable exports
+        run: npm run test:e2e
+      - name: Dependency audit
+        run: npm audit --audit-level=high
+      - name: Upload release for inspection
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fetchxml-release
+          path: dist/

@@ -1,0 +1,1 @@
+module.exports={testDir:'./tests',testMatch:'**/*.spec.js',timeout:45000,expect:{timeout:10000},use:{browserName:'chromium',headless:true,acceptDownloads:true,viewport:{width:1350,height:850}},reporter:'list'};
