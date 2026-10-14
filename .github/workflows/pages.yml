@@ -27,11 +27,24 @@ jobs:
         run: |
           mkdir -p assets
           curl --fail --location --retry 3 'https://raw.githubusercontent.com/mightora/mightora.io/main/static/images/mightoraIoLogo4-200x900.png' -o assets/mightora-logo.png
-          curl --fail --location --retry 3 'https://techtweedie.github.io/images/author/ian-tweedie-sq2_hu_a380911c6f4726de.png' -o assets/author-avatar.png
-          curl --fail --location --retry 3 'https://raw.githubusercontent.com/TechTweedie/techtweedie.github.io/v2/assets/images/site/main-logo.png' -o assets/author-blog-logo.png
+          curl --fail --location --retry 3 'https://raw.githubusercontent.com/mightora/shared-ui/main/ian-tweedie-sq2.png' -o assets/author-avatar.png
+          curl --fail --location --retry 3 'https://raw.githubusercontent.com/mightora/shared-ui/main/main-logo.png' -o assets/author-blog-logo.png
       - run: npm test
       - run: REQUIRE_BRAND_ASSETS=1 npm run build
       - run: node scripts/verify.cjs
+      - name: Verify GitHub Pages is enabled and set to GitHub Actions
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh api "repos/${GITHUB_REPOSITORY}/pages" --jq '.build_type' > /tmp/fetchflow-pages-mode; then
+            echo "::error title=GitHub Pages is not enabled::Open Settings > Pages > Build and deployment, select GitHub Actions, then re-run this workflow."
+            exit 1
+          fi
+          mode="$(cat /tmp/fetchflow-pages-mode)"
+          if [ "$mode" != "workflow" ]; then
+            echo "::error title=Incorrect Pages source::Build and deployment must use GitHub Actions (current source: $mode)."
+            exit 1
+          fi
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
