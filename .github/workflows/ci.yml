@@ -32,8 +32,8 @@ jobs:
         run: |
           mkdir -p assets
           curl --fail --location --retry 3 'https://raw.githubusercontent.com/mightora/mightora.io/main/static/images/mightoraIoLogo4-200x900.png' -o assets/mightora-logo.png
-          curl --fail --location --retry 3 'https://techtweedie.github.io/images/author/ian-tweedie-sq2_hu_a380911c6f4726de.png' -o assets/author-avatar.png
-          curl --fail --location --retry 3 'https://raw.githubusercontent.com/TechTweedie/techtweedie.github.io/v2/assets/images/site/main-logo.png' -o assets/author-blog-logo.png
+          curl --fail --location --retry 3 'https://raw.githubusercontent.com/mightora/shared-ui/main/ian-tweedie-sq2.png' -o assets/author-avatar.png
+          curl --fail --location --retry 3 'https://raw.githubusercontent.com/mightora/shared-ui/main/main-logo.png' -o assets/author-blog-logo.png
       - name: Production build
         run: REQUIRE_BRAND_ASSETS=1 npm run build
       - name: Check offline integrity and export package parity
