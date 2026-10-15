@@ -36,6 +36,22 @@ const patch=`<script>
 </script>`;
 function assemble(offline,dataverse=false){
  let html=document;
+ if(offline){
+   // The portable edition is solely the offline Explorer, not a Dataverse Builder.
+   html=html.replace(/<!--ONLINE_HERO_START-->[\s\S]*?<!--ONLINE_HERO_END-->/,'');
+   html=html.replace(/<!--OFFLINE_HERO_START-->|<!--OFFLINE_HERO_END-->/g,'');
+   html=html.replace(/<section id="browser-tools" class="browser-intro"[\s\S]*?<\/section>/,'');
+   // Keep the lightweight portable navigation free of website-only anchors.
+   html=html.replace(/<nav class="quick-jump-nav"[\s\S]*?<\/nav>/,
+     '<nav class="quick-jump-nav" aria-label="On-page navigation"><div class="container jump-inner"><a href="#builder">01 · Build XML</a><a href="#workspace">02 · Explorer</a><a href="#exports">03 · Exports</a><a href="#privacy">04 · Privacy</a></div></nav>');
+   html=html.replace('OPTIONAL BROWSER DEMO · NO DATAVERSE CONNECTION','OFFLINE VISUAL QUERY COMPOSER');
+   html=html.replace('Try the simple XML composer','Build FetchXML without writing XML');
+   html=html.replace('This browser-only composer accepts logical names manually. To pick real Dataverse tables and fields, build relationships and execute live queries, <a href="#model-driven">install the Dataverse Builder</a>.',
+     'Create basic FetchXML locally using table and column logical names. You can apply it to the Explorer for diagrams and explanations. No Dataverse connection is made.');
+ }else{
+   html=html.replace(/<!--OFFLINE_HERO_START-->[\s\S]*?<!--OFFLINE_HERO_END-->/,'');
+   html=html.replace(/<!--ONLINE_HERO_START-->|<!--ONLINE_HERO_END-->/g,'');
+ }
  const css=baseCss+(dataverse?'\n'+read('src/dataverse-page.css')+'\n'+read('src/dataverse-live.css'):'');
  const pre=`window.__OFFLINE__=${offline};window.__DATAVERSE__=${dataverse};window.__DATAVERSE_PAGE__=${dataverse};window.FETCHXML_EXAMPLES=${JSON.stringify(examples).replace(/</g,'\\u003c')};\n`;
  const app=pre+scripts+(dataverse?'\n'+read('src/dataverse-live.js'):'');
