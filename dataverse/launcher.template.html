@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Open FetchFlow · Mightora</title>
+<!--LAUNCHER_CSP-->
+<style>
+:root{--fb-primary:#128b99;--fb-accent:#0ba5a5;--ink:#173244}
+*{box-sizing:border-box}body{font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;margin:0;color:var(--ink);background:#f4f9fa}
+.fetchflow-launch{padding:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.fetchflow-launch img{width:104px;height:auto;max-height:36px;object-fit:contain}
+.fetchflow-launch button{cursor:pointer;border:0;border-radius:9px;background:var(--fb-primary);color:#fff;padding:10px 14px;font:700 14px/1.2 system-ui}
+.fetchflow-launch button:hover{background:#106574}.fetchflow-launch button:focus-visible{outline:3px solid var(--fb-accent);outline-offset:3px}
+#feedback{font-size:12px;color:#485e69;flex-basis:100%}
+</style></head><body>
+<div class="fetchflow-launch">
+<img src="<!--BRAND_LOGO-->" alt="Mightora">
+<button id="launch" type="button" aria-describedby="feedback">Open FetchXML Builder ↗</button>
+<span id="feedback" role="status" aria-live="polite">Queries are designed locally. No Dataverse data is read.</span>
+</div>
+<script>
+(function(){
+  'use strict';
+  var button=document.getElementById('launch'), feedback=document.getElementById('feedback');
+  button.addEventListener('click',function(){
+    var host;
+    try{host=window.parent&&window.parent.Xrm;}catch(error){host=null;}
+    if(!host||!host.Navigation||typeof host.Navigation.navigateTo!=='function'){
+      feedback.textContent='This launcher requires a model-driven app form. Alternatively add the supplied command-bar action.';
+      return;
+    }
+    var params=new URLSearchParams(window.location.search);
+    var entity=(params.get('typename')||'').trim();
+    var data=params.get('data');
+    if(!entity&&data){try{var parsed=JSON.parse(data);entity=String(parsed.entityName||'');}catch(error){}}
+    var payload=/^[A-Za-z_][A-Za-z0-9_]{0,127}$/.test(entity)?JSON.stringify({entityName:entity}):'';
+    button.disabled=true;
+    host.Navigation.navigateTo(
+      {pageType:'webresource',webresourceName:'mightora_fetchflow_builder.html',data:payload},
+      {target:2,position:1,width:{value:90,unit:'%'},height:{value:90,unit:'%'},title:'Mightora FetchFlow'}
+    ).catch(function(error){feedback.textContent='Could not open FetchFlow: '+String(error.message||error);}).finally(function(){button.disabled=false;});
+  });
+}());
+</script>
+</body></html>

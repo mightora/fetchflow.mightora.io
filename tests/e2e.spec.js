@@ -21,3 +21,31 @@ test('PPTX diagrams and DOCX tables remain editable native Office elements',asyn
   if(format==='pptx'){expect(text).toMatch(/<p:sp>/);expect(text).not.toMatch(/<p:pic>/);}else{expect(text).toMatch(/<w:tbl>/);expect(text).toMatch(/<w:tblGrid>/);}
  }
 });
+test('visual composer generates valid FetchXML without losing existing diagram features',async({page})=>{
+ const requests=[];const errors=[];
+ page.on('request',r=>requests.push(r.url()));page.on('pageerror',e=>errors.push(e.message));
+ await page.setContent(offline());
+ await page.locator('#builder-table').fill('account');
+ await page.locator('#builder-all').uncheck();
+ await page.locator('#builder-columns').fill('name, accountnumber');
+ await page.locator('#builder-add-filter').click();
+ await page.locator('.builder-filter-row input').first().fill('statecode');
+ await page.locator('.builder-filter-row input').nth(1).fill('0');
+ await page.locator('#builder-join').check();
+ await page.locator('#builder-join-table').fill('contact');
+ await page.locator('#builder-join-from').fill('parentcustomerid');
+ await page.locator('#builder-join-to').fill('accountid');
+ await page.locator('#builder-join-columns').fill('fullname');
+ await expect(page.locator('#builder-preview')).toContainText('link-entity name="contact"');
+ await expect(page.locator('#builder-apply')).toBeEnabled();
+ await page.locator('#builder-apply').click();
+ await expect(page.locator('#metric-tables')).toHaveText('2');
+ await expect(page.locator('#metric-fields')).toHaveText('3');
+ await expect(page.locator('#fetchxml')).toHaveValue(/statecode/);
+ await page.locator('#builder-import').click();
+ await expect(page.locator('#builder-preview')).toContainText('statecode');
+ await page.locator('#builder-table').fill('bad table');
+ await expect(page.locator('#builder-apply')).toBeDisabled();
+ expect(requests.filter(x=>x.startsWith('http'))).toHaveLength(0);
+ expect(errors).toHaveLength(0);
+});

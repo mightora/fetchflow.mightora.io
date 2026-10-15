@@ -5,11 +5,14 @@
 [![Deploy Pages](https://github.com/mightora/fetchflow.mightora.io/actions/workflows/pages.yml/badge.svg)](https://github.com/mightora/fetchflow.mightora.io/actions/workflows/pages.yml)
 [![MIT licence](https://img.shields.io/badge/licence-MIT-blue)](LICENSE)
 
-**A free, privacy-first, static FetchXML visualiser for Microsoft Power Platform and Dataverse.**
+**A free, privacy-first, static FetchXML builder and visualiser for Microsoft Power Platform and Dataverse.**
 
 Paste FetchXML to produce three diagrams, a plain-English explanation, and documentation that can be edited in Microsoft Word and PowerPoint. There are no servers or user accounts. The browser does all analysis and file generation.
 
 ## What you get
+
+- **Visual FetchXML builder:** design a basic FetchXML query from table/column names, filter conditions, a linked table, sorting, distinct and top rows; preview and apply the query to the existing three-diagram visualiser. For complex queries the raw XML editor remains the source of truth.
+- **Dataverse web resources:** download one self-contained HTML builder, a compact form launcher and a command-bar JS library. Import as solution web resources to launch a native model-driven dialog. See [`dataverse/README.md`](dataverse/README.md) for setup. No live table metadata access or query execution is implied.
 
 - **Source and relationship diagram:** root Dataverse table, related tables, alias names and matching `from`/`to` columns.
 - **Query-flow chart:** human-friendly interpretation of join stages, nested filter groups, sort order, aggregation and result shaping. Not an actual Dataverse execution plan.
@@ -42,7 +45,7 @@ npm run build
 node scripts/verify.cjs
 ```
 
-`dist/index.html` is the online static site, while `dist/offline/index.html` and `dist/downloads/Mightora-FetchFlow-Offline.zip` are the portable releases.
+`dist/index.html` is the online static site, while `dist/offline/index.html` and `dist/downloads/Mightora-FetchFlow-Offline.zip` are the portable releases. `dist/dataverse/` and `dist/downloads/Mightora-FetchFlow-Dataverse.zip` contain the model-driven app web-resource edition.
 
 For a **production build**, provide `assets/mightora-logo.png` (download from the official Mightora branding URL below) and set `REQUIRE_BRAND_ASSETS=1`.
 
@@ -58,7 +61,7 @@ Brand source: `https://raw.githubusercontent.com/mightora/mightora.io/main/stati
 
 ## Structure
 
-- `src/` — shared parser, diagrams, exports, browser application, styling and markup for **both** editions.
+- `src/` — shared parser, visual query builder, diagrams, exports, browser application, styling and markup for all editions.
 - `examples/examples.json` — easy-to-contribute worked FetchXML examples.
 - `vendor/` — checked-in browser distributions of PptxGenJS and JSZip so the runtime requires no additional library CDN.
 - `scripts/build.cjs` — deterministic single-file builds and ZIP package.
@@ -69,6 +72,10 @@ Brand source: `https://raw.githubusercontent.com/mightora/mightora.io/main/stati
 ### Adding examples
 
 Open a pull request to `examples/examples.json`. Provide `id`, `name`, `description` and `xml`. Use fictitious / anonymised names. Unit tests ensure all examples continue to parse.
+
+## Dataverse integration
+
+Install the downloadable HTML/JavaScript web resources into a Dataverse solution. A native command-bar button is recommended; a form-embedded HTML launcher is also provided. The builder opens in a dialog using supported `Xrm.Navigation.navigateTo`, not an external GitHub Pages iframe. The ZIP is a **web-resource installer package**, not a ready-to-import Dataverse managed solution. For installation, naming, privacy and capabilities, read [the Dataverse setup guide](dataverse/README.md).
 
 ## Limitations
 

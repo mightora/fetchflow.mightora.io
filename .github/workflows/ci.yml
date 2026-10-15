@@ -25,6 +25,8 @@ jobs:
           node --check src/diagrams.js
           node --check src/exports.js
           node --check src/app.js
+          node --check src/builder.js
+          node --check dataverse/mightora_fetchflow_command.js
           node --check scripts/build.cjs
       - name: Unit tests
         run: npm test

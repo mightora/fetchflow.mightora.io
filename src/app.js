@@ -61,8 +61,14 @@
     $('format').addEventListener('click',()=>{try{const doc=new DOMParser().parseFromString($('fetchxml').value,'application/xml');if(doc.querySelector('parsererror'))throw Error('Fix XML errors before formatting.');const raw=new XMLSerializer().serializeToString(doc);let depth=0;const formatted=raw.replace(/>\s*</g,'>\n<').split('\n').map(line=>{if(/^<\//.test(line))depth=Math.max(0,depth-1);const out='  '.repeat(depth)+line;if(/^<[^!?/][^>]*[^/]>/i.test(line)&&!/<\/[^>]+>$/.test(line))depth++;return out;}).join('\n');$('fetchxml').value=formatted;visualise();}catch(e){announce(e.message);}});
     document.querySelectorAll('[data-export]').forEach(b=>b.addEventListener('click',()=>runExport(b.dataset.export)));
     $('copy-summary').addEventListener('click',async()=>{if(!current)return;try{await navigator.clipboard.writeText(M.summary(current).join('\n'));announce('Explanation copied.');}catch(e){announce('Clipboard not available here. Use the export options instead.');}});
+    if(root.FetchXMLBuilder){
+      root.FetchXMLBuilder.mount($('builder'),{
+        getXML:()=> $('fetchxml').value,
+        onApply:xml=>{ $('fetchxml').value=xml; $('example-name').textContent='Generated with the visual builder'; visualise(); $('workspace').scrollIntoView({behavior:'smooth',block:'start'}); }
+      });
+    }
     $('network-refresh').addEventListener('click',network);
-    if(root.__OFFLINE__){$('offline-status').hidden=false;document.querySelectorAll('.online-only').forEach(x=>x.hidden=true);}
+    if(root.__OFFLINE__){$('offline-status').hidden=false;document.querySelectorAll('.online-only').forEach(x=>x.hidden=true);}if(root.__DATAVERSE__){$('offline-status').textContent='Dataverse web resource edition · Queries are composed locally, without reading Dataverse records or metadata.';}
     selectExample('account-contact');sample.value='account-contact';network();setTimeout(network,1500);
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
