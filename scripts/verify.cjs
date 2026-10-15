@@ -30,7 +30,7 @@ const JSZip=require('../vendor/jszip.min.js');
  assert(online.includes('normaliseSharedFooterLinks'),'Root-relative shared links must resolve to mightora.io');
  assert(online.includes('id="model-driven"'),'Public website must include Dataverse install guide');
  assert(online.includes('class="hero hero-builder"'),'Online homepage must lead with Dataverse Builder');
- assert(online.includes('class="hero-primary"'),'Builder must be the primary hero call to action');
+ assert(online.includes('class="btn hero-primary"'),'Builder must be the primary hero call to action');
  assert(online.includes('id="browser-tools"'),'Browser Explorer must be clearly distinguished from live Dataverse Builder');
  assert(online.indexOf('id="model-driven"')<online.indexOf('id="builder"'),'Downloadable Dataverse Builder must precede browser demo');
  assert(online.includes('class="install-overview"'),'Simple three-step installation must be visible before detailed steps');
