@@ -36,11 +36,31 @@ const patch=`<script>
 </script>`;
 function assemble(offline,dataverse=false){
  let html=document;
- const css=baseCss+(dataverse?'\n'+read('src/dataverse-page.css'):'');
+ const css=baseCss+(dataverse?'\n'+read('src/dataverse-page.css')+'\n'+read('src/dataverse-live.css'):'');
  const pre=`window.__OFFLINE__=${offline};window.__DATAVERSE__=${dataverse};window.__DATAVERSE_PAGE__=${dataverse};window.FETCHXML_EXAMPLES=${JSON.stringify(examples).replace(/</g,'\\u003c')};\n`;
- const app=pre+scripts;
+ const app=pre+scripts+(dataverse?'\n'+read('src/dataverse-live.js'):'');
  const escapedApp=app.replace(/<\/script/gi,'<\\/script');
  html=html.replace('/*BUILD_CSS*/',css).replace('<!--SCRIPTS-->',()=>`<script>${escapedApp}</script>`);
+ if(dataverse){
+   html=html.replace('<main><div class="container">',
+      '<main><div class="container">'+read('dataverse/live-workspace.template.html'));
+   html=html.replace('<a href="#builder">01 · Build XML</a>',
+     '<a href="#dataverse-live">01 · Live Dataverse Builder</a><a href="#builder">02 · Visual query composer</a>');
+   html=html.replace('<a href="#workspace">02 · Editor</a>','<a href="#workspace">03 · XML Explorer</a>');
+   html=html.replace('Build FetchXML without writing XML','Build and refine FetchXML visually');
+   html=html.replace('This is a local, schema-agnostic starter builder; validate column names and join keys against your environment.',
+     'Use the live metadata selector above to populate tables, columns and relationships, or enter logical names manually. Apply generated XML to the Explorer for troubleshooting.');
+   html=html.replace('FetchFlow cannot verify relationship metadata in this edition.',
+     'Relationship suggestions are available from the connected Dataverse workspace above.');
+   html=html.replace('Build, inspect and export FetchXML directly inside your model-driven app.',
+     'Discover, build and run live Dataverse queries; explore and troubleshoot FetchXML.');
+   html=html.replace('It does not run your query, connect to Microsoft Dataverse, access real records, validate security roles or confirm underlying relationship metadata.',
+     'Explorer mode does not execute queries, but the connected Builder above can retrieve metadata and execute FetchXML using the signed-in user’s Dataverse permissions.');
+   html=html.replace('It builds diagrams from the XML structure only. You do not provide an environment URL or credentials.',
+     'The connected Builder can execute read-only FetchXML in your environment using the signed-in Dataverse session. The Explorer diagrams still analyse XML structure locally.');
+   html=html.replace('All FetchXML parsing, diagram creation, SVG / PNG / JSON / Mermaid exports and office document creation happen in your browser.',
+     'Explorer visualisations and exports run in your browser. The Live Builder reads metadata and executes read-only FetchXML within your signed-in Dataverse environment.');
+ }
  html=html.replace('<!--BRAND_STYLE-->',offline?'':`<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/mightora/shared-ui@main/shared.css" />`);
  if(offline){
   // Installation downloads and website-specific instructions belong only
@@ -95,7 +115,7 @@ function assemble(offline,dataverse=false){
    html=html.replace(/<div id="offline-status" class="offline-banner" hidden>[\s\S]*?<\/div><\/div>/,'');
   }
   // CSP includes script/style hashes; forbids connections and all network content.
-  const csp=`default-src 'none'; script-src ${hash(escapedApp)}; style-src ${hash(css)}; img-src data:; font-src data:; connect-src 'none'; object-src 'none'; frame-src 'none'; form-action 'none'; base-uri 'none'; manifest-src 'none'`;
+  const csp=`default-src 'none'; script-src ${hash(escapedApp)}; style-src ${hash(css)}; img-src data:; font-src data:; connect-src ${dataverse?"'self'":"'none'"}; object-src 'none'; frame-src 'none'; form-action 'none'; base-uri 'none'; manifest-src 'none'`;
   html=html.replace('<!--BUILD_CSP-->',`<meta http-equiv="Content-Security-Policy" content="${csp}" />`);
  }else{
   html=html.replace('<!--OFFLINE_HEADER-->','').replace('<!--OFFLINE_FOOTER-->','');
