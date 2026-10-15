@@ -52,7 +52,7 @@ async function loadTables(){
   tableList=items.filter(t=>nameRx.test(t.LogicalName||'')&&!t.IsPrivate).map(t=>({name:t.LogicalName,label:labels(t.DisplayName)||t.LogicalName})).sort((a,b)=>a.label.localeCompare(b.label));
   showTables();
   updateStatus('metadata-status',tableList.length+' tables available. Pick one to start.');
-  if(tableList.some(t=>t.name==='account'))await loadFields('account');
+  if(tableList.some(t=>t.name==='account')){await loadFields('account');renderFields();}
  }catch(e){updateStatus('metadata-status',e.message,true);}
 }
 function showTables(){
