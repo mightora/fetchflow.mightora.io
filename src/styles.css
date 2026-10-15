@@ -102,3 +102,18 @@ mightora-footer:not(.portable-footer) .footer-brand-desc{font-size:.75rem;color:
 .install-references a{font-weight:700}
 @media(max-width:980px){.install-layout{grid-template-columns:1fr}}
 @media(max-width:640px){.install-download,.install-walkthrough{padding:17px}.install-download-actions{flex-direction:column}.install-download-actions .btn{width:100%}.install-steps li{padding-left:40px}}
+
+/* Shared footer reliability: always show readable navigation while YAML loads
+   (and if the shared component or CDN cannot initialise). */
+mightora-footer:not(.portable-footer) .footer-fallback{display:block}
+mightora-footer:not(.portable-footer) .footer-fallback[hidden]{display:none!important}
+mightora-footer:not(.portable-footer) .footer-fallback .footer-main{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2rem}
+mightora-footer:not(.portable-footer) .footer-fallback .footer-links a{display:inline-block;color:#e8f7fa;text-decoration:none;line-height:1.6}
+mightora-footer:not(.portable-footer) .footer-fallback .footer-links a:hover{text-decoration:underline;color:#fff}
+mightora-footer:not(.portable-footer) .footer-fallback .footer-brand{color:#fff}
+mightora-footer:not(.portable-footer) .footer-fallback .footer-brand-desc{color:#e5ebee}
+mightora-footer:not(.portable-footer) :where(.footer-links,.footer-brands,.footer-bottom-links) a:focus-visible{outline:3px solid var(--fb-accent);outline-offset:3px;border-radius:2px}
+@supports selector(:has(*)){
+  mightora-footer:not(.portable-footer):has(> .container > .footer-main .footer-links a) > .footer-fallback{display:none}
+}
+@media(max-width:768px){mightora-footer:not(.portable-footer) .footer-fallback .footer-main{grid-template-columns:1fr;gap:1.5rem}}

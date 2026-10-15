@@ -17,6 +17,13 @@ const JSZip=require('../vendor/jszip.min.js');
  assert(online.indexOf('js-yaml.min.js')<online.indexOf('shared-ui@main/components.js'));
  assert(online.indexOf('class="badges"')<online.indexOf('<mightora-footer aria-label="Mightora footer">'));
  assert(online.includes('<mightora-footer aria-label="Mightora footer">'),'Online must use official shared component');
+ assert(online.includes('class="footer-fallback"'),'Online footer must show fallback while shared links load');
+ assert(online.includes('https://mightora.io/tools/'),'Fallback links must include Mightora tools');
+ assert(online.includes('https://mightora.io/privacy-policy/'),'Fallback links must include privacy');
+ assert(online.includes('const fixed=yaml.replace('),'Shared footer YAML interceptor must preserve nesting');
+ assert(!online.includes("replace(/^(\\\\s{4})(\\\\S)/gm"),'Shared footer YAML must never unindent valid nested keys');
+ assert(!offline.includes('class="footer-fallback"'),'Offline build must keep compact self-contained footer only');
+
  assert(online.includes('class="footer-year"'),'The shared footer must show an updatable copyright year');
  assert(online.includes('class="footer-bottom-links"'),'The shared footer must include its secondary link row');
  assert(online.includes('class="site-footer__note"'),'The shared footer must include its standard note');

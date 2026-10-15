@@ -17,7 +17,23 @@ const scripts=vendor+'\n'+['src/model.js','src/diagrams.js','src/exports.js','sr
 const baseCss=read('src/styles.css');
 const document=read('src/index.template.html');
 const hash=s=>`'sha256-${crypto.createHash('sha256').update(s).digest('base64')}'`;
-const patch=`<script>(function(){const original=window.fetch;window.fetch=async function(input,init){const response=await original.call(this,input,init);const target=typeof input==='string'?input:input&&input.url||'';if(/footer\\.ya?ml(?:[?#]|$)/i.test(target)&&response.ok){try{const content=await response.clone().text();const fixed=content.replace(/\\t/g,'  ').replace(/^(\\s{4})(\\S)/gm,'  $2');return new Response(fixed,{status:response.status,statusText:response.statusText,headers:response.headers});}catch{return response;}}return response;};})();</script>`;
+const patch=`<script>
+(function(){
+  const originalFetch=window.fetch;
+  window.fetch=async function(input,init){
+    const response=await originalFetch.call(this,input,init);
+    const target=typeof input==='string'?input:(input&&input.url)||'';
+    if(!/footer\\.ya?ml(?:[?#]|$)/i.test(target)||!response.ok)return response;
+    try{
+      const yaml=await response.clone().text();
+      // Preserve valid YAML nesting: only normalise line endings and tabs.
+      // Re-indenting 4-space YAML keys to 2 spaces breaks Mightora columns.
+      const fixed=yaml.replace(/\\r\\n?/g,'\\n').replace(/\\t/g,'  ');
+      return new Response(fixed,{status:response.status,statusText:response.statusText,headers:response.headers});
+    }catch{return response;}
+  };
+})();
+</script>`;
 function assemble(offline,dataverse=false){
  let html=document;
  const css=baseCss+(dataverse?'\n'+read('src/dataverse-page.css'):'');

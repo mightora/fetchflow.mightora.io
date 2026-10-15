@@ -131,3 +131,58 @@ test('installation instructions work on narrow mobile layouts',async({page})=>{
  expect(bounds).not.toBeNull();
  expect(bounds.width).toBeLessThanOrEqual(390);
 });
+
+test('Mightora footer navigation remains visible even when shared scripts or YAML are unavailable',async({page})=>{
+ const online=fs.readFileSync(path.resolve(__dirname,'../dist/index.html'),'utf8');
+ await page.route('**/*',route=>route.abort());
+ await page.setContent(online);
+ const footer=page.locator('mightora-footer');
+ await expect(footer.locator('.footer-fallback')).toBeVisible();
+ await expect(footer.locator('.footer-fallback .footer-col')).toHaveCount(3);
+ await expect(footer.locator('.footer-fallback .footer-links a').first()).toBeVisible();
+ await expect(footer.locator('.footer-fallback .footer-links a[href="https://mightora.io/tools/"]')).toBeVisible();
+ await expect(footer.locator('.footer-fallback .footer-links a[href="https://mightora.io/privacy-policy/"]')).toBeVisible();
+ const appearance=await footer.locator('.footer-fallback .footer-links a').first().evaluate(a=>({
+   color:getComputedStyle(a).color,visibility:getComputedStyle(a).visibility
+ }));
+ expect(appearance.visibility).toBe('visible');
+ expect(appearance.color).not.toBe('rgb(23, 50, 68)');
+ await page.evaluate(()=>{
+   const footer=document.querySelector('mightora-footer');
+   const wrapper=document.createElement('div');
+   wrapper.className='container';
+   wrapper.innerHTML='<div class="footer-main"><div class="footer-col"><ul class="footer-links"><li><a href="/about/">About</a></li></ul></div></div>';
+   footer.prepend(wrapper);
+ });
+ await expect(footer.locator(':scope > .footer-fallback')).toBeHidden();
+ await expect(footer.locator(':scope > .container > .footer-main .footer-links a')).toHaveAttribute('href','https://mightora.io/about/');
+ await expect(footer.locator(':scope > .container > .footer-main .footer-links a')).toBeVisible();
+});
+test('shared Mightora footer YAML intercept keeps valid list and field indentation',async({page})=>{
+ const online=fs.readFileSync(path.resolve(__dirname,'../dist/index.html'),'utf8');
+ const yaml='sections:\\n  - title: "Site"\\n    column: 1\\n    position: 1\\n    links:\\n      - name: "About"\\n        url: "/about/"\\n';
+ await page.route('**/*',route=>{
+   if(route.request().url().endsWith('/footer.yaml')){
+     return route.fulfill({status:200,headers:{'access-control-allow-origin':'*','content-type':'text/plain'},body:yaml});
+   }
+   return route.abort();
+ });
+ await page.setContent(online);
+ const response=await page.evaluate(async()=>{
+   const r=await fetch('https://cdn.jsdelivr.net/gh/mightora/shared-ui@main/footer.yaml');
+   return r.text();
+ });
+ expect(response).toBe(yaml);
+});
+test('fallback footer navigation is readable on mobile widths',async({page})=>{
+ await page.setViewportSize({width:390,height:844});
+ const online=fs.readFileSync(path.resolve(__dirname,'../dist/index.html'),'utf8');
+ await page.route('**/*',route=>route.abort());
+ await page.setContent(online);
+ const footer=page.locator('mightora-footer');
+ await footer.scrollIntoViewIfNeeded();
+ await expect(footer.locator('.footer-fallback .footer-col')).toHaveCount(3);
+ await expect(footer.locator('.footer-fallback .footer-links a').first()).toBeVisible();
+ const width=await footer.evaluate(el=>el.getBoundingClientRect().width);
+ expect(width).toBeLessThanOrEqual(390);
+});
