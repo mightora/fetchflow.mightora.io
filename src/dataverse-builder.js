@@ -191,7 +191,7 @@ function addField(table,field,targetId){
 async function changeTable(n,table){
  if(!nameRx.test(table)){updateStatus('metadata-status','Enter a valid Dataverse logical table name.',true);return;}
  if(!takeVisualEdit())return;
- n.table=table;n.fields=[];n.filters=[];renderCanvas();touch();
+ n.table=table;n.fields=[];n.filters=[];if(n.id!=='root'){n.from='';n.to='';n.alias='';}renderCanvas();touch();
  if(!origin)return;
  try{await loadFields(table);if(activeId===n.id)renderFields();}catch(e){updateStatus('metadata-status',e.message,true);}
 }
