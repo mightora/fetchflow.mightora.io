@@ -102,3 +102,32 @@ test('public footer keeps shared components and fixes root-relative Mightora lin
  });
  await expect(page.locator('#footer-route-check')).toHaveAttribute('href','https://mightora.io/about/');
 });
+
+test('public site shows direct web-resource downloads and model-driven app installation steps',async({page})=>{
+ const online=fs.readFileSync(path.resolve(__dirname,'../dist/index.html'),'utf8');
+ await page.route('**/*',route=>route.abort());
+ await page.setContent(online);
+ const install=page.locator('#model-driven');
+ await expect(install).toBeVisible();
+ await expect(page.locator('.quick-jump-nav a[href="#model-driven"]')).toHaveCount(1);
+ await expect(install.locator('.install-steps li')).toHaveCount(6);
+ await expect(install.locator('a[download="mightora_fetchflow_builder.html"]')).toHaveAttribute('href','dataverse/mightora_fetchflow_builder.html');
+ await expect(install.locator('a[href="downloads/Mightora-FetchFlow-Dataverse.zip"]')).toHaveCount(1);
+ await expect(install).toContainText('not an importable Dataverse solution ZIP');
+ await expect(install).toContainText('Show in navigation');
+ const matchingHTML=fs.readFileSync(path.resolve(__dirname,'../dist/dataverse/mightora_fetchflow_builder.html'),'utf8');
+ expect(matchingHTML).toContain('window.__DATAVERSE_PAGE__=true;');
+});
+test('installation instructions work on narrow mobile layouts',async({page})=>{
+ await page.setViewportSize({width:390,height:844});
+ const online=fs.readFileSync(path.resolve(__dirname,'../dist/index.html'),'utf8');
+ await page.route('**/*',route=>route.abort());
+ await page.setContent(online);
+ const install=page.locator('#model-driven');
+ await install.scrollIntoViewIfNeeded();
+ await expect(install).toBeVisible();
+ await expect(install.locator('.install-steps li')).toHaveCount(6);
+ const bounds=await install.boundingBox();
+ expect(bounds).not.toBeNull();
+ expect(bounds.width).toBeLessThanOrEqual(390);
+});
