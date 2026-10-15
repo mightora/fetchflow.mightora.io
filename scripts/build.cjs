@@ -27,6 +27,16 @@ function assemble(offline,dataverse=false){
  html=html.replace('/*BUILD_CSS*/',css).replace('<!--SCRIPTS-->',()=>`<script>${escapedApp}</script>`);
  html=html.replace('<!--BRAND_STYLE-->',offline?'':`<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/mightora/shared-ui@main/shared.css" />`);
  if(offline){
+  // Installation downloads and website-specific instructions belong only
+  // on the public website, not inside local HTML or Dataverse app pages.
+  html=html.replace(/<!--ONLINE_INSTALL_START-->[\s\S]*?<!--ONLINE_INSTALL_END-->/,'');
+  html=html.replace(/<a href="#model-driven">07 · Power Apps setup<\/a>/,'');
+  html=html.replace('08 · Privacy & help','07 · Privacy & help');
+  html=html.replace(/<p class="hero-install-cta">[\s\S]*?<\/p>/,'');
+  // Remove the exports-area teaser and replace the online-only FAQ anchor.
+  html=html.replace(/<div class="download-card online-only"><div><strong>Install in your model-driven Power App<\/strong>[\s\S]*?<a class="btn" href="#model-driven">View installation instructions →<\/a><\/div>/,'');
+  html=html.replace('Use the <a href="#model-driven">on-page installation guide</a>',
+                    'On the online FetchFlow website, use the installation guide');
   html=html.replace('<!--FOOTER_PATCH-->','');
   // Offline edition must never fetch live CI badges: status is only verifiable online.
   html=html.replace(/<img\s+class="live-badge"[^>]*>/gi,'');
