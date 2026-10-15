@@ -44,3 +44,19 @@ mightora-footer.portable-footer{display:block;background:#111827;color:rgba(255,
 .portable-footer .footer-bottom{border-top:1px solid rgba(255,255,255,.2);display:flex;gap:1rem;flex-wrap:wrap;justify-content:space-between;align-items:center}
 .portable-footer .footer-bottom-links a,.portable-footer .footer-copy a{color:#e7f9f5}
 @media(max-width:640px){.portable-footer .portable-footer-brand{flex-direction:column;align-items:flex-start}}
+
+/* Local fallback if shared-ui CSS is unavailable; normal shared-ui rules still
+   own the column layout and brand cards when loaded. */
+mightora-author{background-color:#102e40}
+mightora-footer:not(.portable-footer){display:block;background:#111827;color:#fff;padding:3rem 0 0}
+mightora-footer:not(.portable-footer) .footer-main{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2rem;margin-bottom:2.5rem}
+mightora-footer:not(.portable-footer) .footer-col-sections{display:flex;flex-direction:column;gap:1.5rem}
+mightora-footer:not(.portable-footer) .footer-section-title{font-weight:700;color:rgba(255,255,255,.8);font-size:.8rem;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem}
+mightora-footer:not(.portable-footer) .footer-links{list-style:none;display:flex;flex-direction:column;gap:.45rem;padding:0;margin:0}
+mightora-footer:not(.portable-footer) .footer-links a{color:rgba(255,255,255,.86);font-size:.875rem;text-decoration:none}
+mightora-footer:not(.portable-footer) .footer-links a:hover{color:#fff;text-decoration:underline}
+mightora-footer:not(.portable-footer) .footer-brands{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;border-top:1px solid rgba(255,255,255,.2);padding:1.5rem 0}
+mightora-footer:not(.portable-footer) .footer-brand{display:flex;gap:.75rem;align-items:center;color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.15);padding:.6rem 1rem;border-radius:8px}
+mightora-footer:not(.portable-footer) .footer-brand img{max-height:28px;width:auto;max-width:120px;object-fit:contain}
+mightora-footer:not(.portable-footer) .footer-brand-desc{font-size:.75rem;color:rgba(255,255,255,.85)}
+@media(max-width:768px){mightora-footer:not(.portable-footer) .footer-main{grid-template-columns:1fr;gap:1.5rem}}
