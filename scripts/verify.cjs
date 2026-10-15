@@ -15,7 +15,7 @@ const JSZip=require('../vendor/jszip.min.js');
  assert(online.includes('mightora/shared-ui@main/shared.css'));
  assert(online.includes('mightora/shared-ui@main/components.js'));
  assert(online.indexOf('js-yaml.min.js')<online.indexOf('shared-ui@main/components.js'));
- assert(online.indexOf('class="badges"')<online.indexOf('<mightora-footer>'));
+ assert(online.indexOf('class="badges"')<online.indexOf('<mightora-footer aria-label="Mightora footer">'));
  assert(online.includes('<mightora-footer aria-label="Mightora footer">'),'Online must use official shared component');
  assert(online.includes('class="footer-year"'),'The shared footer must show an updatable copyright year');
  assert(online.includes('class="footer-bottom-links"'),'The shared footer must include its secondary link row');
