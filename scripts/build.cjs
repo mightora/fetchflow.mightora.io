@@ -13,14 +13,14 @@ const techFallback='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120
 const logo=dataAsset('assets/mightora-logo.png',brandFallback),avatar=dataAsset('assets/author-avatar.png',avatarFallback),tt=dataAsset('assets/author-blog-logo.png',techFallback);
 const examples=JSON.parse(read('examples/examples.json'));
 const vendor=read('vendor/jszip.min.js')+'\n'+read('vendor/pptxgen.min.js');
-const scripts=vendor+'\n'+['src/model.js','src/diagrams.js','src/exports.js','src/app.js'].map(read).join('\n');
+const scripts=vendor+'\n'+['src/model.js','src/diagrams.js','src/exports.js','src/builder.js','src/app.js'].map(read).join('\n');
 const css=read('src/styles.css');
 const document=read('src/index.template.html');
 const hash=s=>`'sha256-${crypto.createHash('sha256').update(s).digest('base64')}'`;
 const patch=`<script>(function(){const original=window.fetch;window.fetch=async function(input,init){const response=await original.call(this,input,init);const target=typeof input==='string'?input:input&&input.url||'';if(/footer\\.ya?ml(?:[?#]|$)/i.test(target)&&response.ok){try{const content=await response.clone().text();const fixed=content.replace(/\\t/g,'  ').replace(/^(\\s{4})(\\S)/gm,'  $2');return new Response(fixed,{status:response.status,statusText:response.statusText,headers:response.headers});}catch{return response;}}return response;};})();</script>`;
-function assemble(offline){
+function assemble(offline,dataverse=false){
  let html=document;
- const pre=`window.__OFFLINE__=${offline};window.FETCHXML_EXAMPLES=${JSON.stringify(examples).replace(/</g,'\\u003c')};\n`;
+ const pre=`window.__OFFLINE__=${offline};window.__DATAVERSE__=${dataverse};window.FETCHXML_EXAMPLES=${JSON.stringify(examples).replace(/</g,'\\u003c')};\n`;
  const app=pre+scripts;
  const escapedApp=app.replace(/<\/script/gi,'<\\/script');
  html=html.replace('/*BUILD_CSS*/',css).replace('<!--SCRIPTS-->',()=>`<script>${escapedApp}</script>`);
@@ -48,9 +48,21 @@ function assemble(offline){
 }
 (async()=>{
  if(process.env.REQUIRE_BRAND_ASSETS==='1' && !has('assets/mightora-logo.png')) throw new Error('Official Mightora logo is required for a production build.');
- const dist=path.join(root,'dist');fs.rmSync(dist,{recursive:true,force:true});fs.mkdirSync(path.join(dist,'offline'),{recursive:true});fs.mkdirSync(path.join(dist,'downloads'),{recursive:true});
- const online=assemble(false),offline=assemble(true);
+ const dist=path.join(root,'dist');fs.rmSync(dist,{recursive:true,force:true});fs.mkdirSync(path.join(dist,'offline'),{recursive:true});fs.mkdirSync(path.join(dist,'downloads'),{recursive:true});fs.mkdirSync(path.join(dist,'dataverse'),{recursive:true});
+ const online=assemble(false),offline=assemble(true),dataverse=assemble(true,true).replace('Offline Edition – No Internet Connection Required','Dataverse Edition – Local Query Builder');
  fs.writeFileSync(path.join(dist,'index.html'),online);fs.writeFileSync(path.join(dist,'offline/index.html'),offline);
+ fs.writeFileSync(path.join(dist,'dataverse/mightora_fetchflow_builder.html'),dataverse);
+ // Form launcher is a small, locally executable HTML web resource. Hash its
+ // static inline CSS/JS instead of allowing unrestricted inline content.
+ let launcher=read('dataverse/launcher.template.html').replace('<!--BRAND_LOGO-->',logo);
+ const launcherStyle=launcher.match(/<style>([\s\S]*?)<\/style>/)[1];
+ const launcherScript=launcher.match(/<script>([\s\S]*?)<\/script>/)[1];
+ const launchCsp="default-src 'none'; script-src "+hash(launcherScript)+"; style-src "+hash(launcherStyle)+"; img-src data:; connect-src 'none'; object-src 'none'; frame-src 'none'; form-action 'none'; base-uri 'none'";
+ launcher=launcher.replace('<!--LAUNCHER_CSP-->', '<meta http-equiv="Content-Security-Policy" content="'+launchCsp+'" />');
+ fs.writeFileSync(path.join(dist,'dataverse/mightora_fetchflow_launcher.html'),launcher);
+ const command=read('dataverse/mightora_fetchflow_command.js');
+ fs.writeFileSync(path.join(dist,'dataverse/mightora_fetchflow_command.js'),command);
+ fs.copyFileSync(path.join(root,'dataverse/README.md'),path.join(dist,'dataverse/README.md'));
  fs.writeFileSync(path.join(dist,'robots.txt'),'User-agent: *\nAllow: /\nSitemap: https://fetchflow.mightora.io/sitemap.xml\n');
  fs.writeFileSync(path.join(dist,'sitemap.xml'),'<?xml version="1.0"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://fetchflow.mightora.io/</loc></url></urlset>');
  fs.copyFileSync(path.join(root,'LICENSE'),path.join(dist,'LICENSE'));
@@ -59,6 +71,14 @@ function assemble(offline){
  zip.file('README.txt','Mightora FetchFlow — Offline Edition\n\n1. Extract ZIP.\n2. Double-click index.html in Chrome, Edge, Firefox or Safari.\n3. Load a sample or paste FetchXML.\n4. Export editable PPTX, DOCX, diagrams and JSON.\n\nNo connection, account, server or installation is required. All FetchXML processing occurs locally.\n\nTo verify network privacy: F12 > Developer Tools > Network > Preserve log > Reload. Inspect requests. The on-screen resource summary is not a full network audit.\n\nSource: https://github.com/mightora/fetchflow.mightora.io\n');
  const buffer=await zip.generateAsync({type:'nodebuffer',compression:'DEFLATE'});
  fs.writeFileSync(path.join(dist,'downloads/Mightora-FetchFlow-Offline.zip'),buffer);
- console.log(`Online HTML ${(online.length/1024).toFixed(1)} KB | Offline HTML ${(offline.length/1024).toFixed(1)} KB | ZIP ${(buffer.length/1024).toFixed(1)} KB`);
+ const webZip=new JSZip();
+ webZip.file('mightora_fetchflow_builder.html',dataverse);
+ webZip.file('mightora_fetchflow_launcher.html',launcher);
+ webZip.file('mightora_fetchflow_command.js',command);
+ webZip.file('README.md',read('dataverse/README.md'));
+ webZip.file('LICENSE',read('LICENSE'));
+ const webBuffer=await webZip.generateAsync({type:'nodebuffer',compression:'DEFLATE'});
+ fs.writeFileSync(path.join(dist,'downloads/Mightora-FetchFlow-Dataverse.zip'),webBuffer);
+ console.log(`Online HTML ${(online.length/1024).toFixed(1)} KB | Offline HTML ${(offline.length/1024).toFixed(1)} KB | Offline ZIP ${(buffer.length/1024).toFixed(1)} KB | Dataverse ZIP ${(webBuffer.length/1024).toFixed(1)} KB`);
  if(!has('assets/mightora-logo.png'))console.warn('Note: official brand logo was not downloaded locally. CI downloads authoritative brand assets before publishing.');
 })();
