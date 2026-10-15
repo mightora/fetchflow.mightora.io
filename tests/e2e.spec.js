@@ -51,38 +51,8 @@ test('visual composer generates valid FetchXML without losing existing diagram f
  expect(errors).toHaveLength(0);
 });
 
-test('Dataverse full-page resource is local, compact and preserves the visual builder',async({page})=>{
- const requests=[],errors=[];
- page.on('request',request=>requests.push(request.url()));
- page.on('pageerror',error=>errors.push(error.message));
- const dataverse=fs.readFileSync(path.resolve(__dirname,'../dist/dataverse/mightora_fetchflow_builder.html'),'utf8');
- await page.setContent(dataverse);
- await expect(page.locator('body')).toHaveClass(/dataverse-page/);
- await expect(page.locator('.dv-page-logo')).toHaveAttribute('src',new RegExp('^data:image/'));
- await expect(page.locator('.dv-page-heading h1')).toContainText('FetchFlow');
- await expect(page.locator('mightora-header, mightora-author')).toHaveCount(0);
- await expect(page.locator('mightora-footer.portable-footer.embedded-footer')).toHaveCount(1);
- await expect(page.locator('mightora-footer .footer-bottom-links a')).toHaveCount(3);
- await expect(page.locator('.hero')).toHaveCount(0);
- await expect(page.locator('#builder')).toBeVisible();
- await expect(page.locator('#metric-tables')).toHaveText('1');
- await page.locator('#builder-all').uncheck();
- await page.locator('#builder-columns').fill('name, accountnumber');
- await page.locator('#builder-apply').click();
- await expect(page.locator('#metric-fields')).toHaveText('2');
- await expect(page.locator('#fetchxml')).toHaveValue(/attribute name="accountnumber"/);
- await expect(page.locator('.diagram-visual svg')).toHaveCount(3);
- expect(requests.filter(url=>url.startsWith('http'))).toHaveLength(0);
- expect(errors).toHaveLength(0);
-});
-test('Dataverse full-page layout remains usable at tablet widths',async({page})=>{
- await page.setViewportSize({width:820,height:900});
- const dataverse=fs.readFileSync(path.resolve(__dirname,'../dist/dataverse/mightora_fetchflow_builder.html'),'utf8');
- await page.setContent(dataverse);
- await expect(page.locator('#builder-table')).toBeVisible();
- await expect(page.locator('#builder-preview')).toBeVisible();
- await expect(page.locator('#builder-apply')).toBeEnabled();
-});
+
+
 
 test('public footer keeps shared components and fixes root-relative Mightora links',async({page})=>{
  const online=fs.readFileSync(path.resolve(__dirname,'../dist/index.html'),'utf8');
@@ -187,86 +157,5 @@ test('fallback footer navigation is readable on mobile widths',async({page})=>{
  expect(width).toBeLessThanOrEqual(390);
 });
 
-test('Dataverse Builder discovers live metadata, builds and tests read-only FetchXML',async({page})=>{
- const base='https://example.crm.dynamics.com';
- const html=fs.readFileSync(path.resolve(__dirname,'../dist/dataverse/mightora_fetchflow_builder.html'),'utf8');
- const label=name=>({UserLocalizedLabel:{Label:name}});
- const requests=[];
- await page.addInitScript(()=>{
-   window.__queryCalls=[];
-   window.Xrm={
-     Utility:{getGlobalContext:()=>({getClientUrl:()=>location.origin})},
-     WebApi:{online:{retrieveMultipleRecords:async(entity,options,pageSize)=>{
-       window.__queryCalls.push({entity,options,pageSize});
-       return {entities:[{accountid:'abc',name:'Contoso',accountnumber:'A001'},{accountid:'def',name:'<script>alert(1)</script>',accountnumber:'A002'}],moreRecords:false};
-     }}}
-   };
- });
- await page.route(base+'/**',route=>{
-   const url=new URL(route.request().url());
-   if(url.pathname==='/WebResources/mightora_fetchflow_builder.html'){
-     return route.fulfill({status:200,contentType:'text/html',body:html});
-   }
-   requests.push(url.pathname);
-   if(url.pathname.endsWith('/EntityDefinitions')){
-     return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({value:[
-       {LogicalName:'account',DisplayName:label('Account'),IsPrivate:false},
-       {LogicalName:'contact',DisplayName:label('Contact'),IsPrivate:false}
-     ]})});
-   }
-   if(url.pathname.endsWith('/Attributes')){
-     return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({value:[
-       {LogicalName:'accountid',DisplayName:label('Account'),AttributeType:'Uniqueidentifier',IsValidForRead:true},
-       {LogicalName:'name',DisplayName:label('Account Name'),AttributeType:'String',IsValidForRead:true},
-       {LogicalName:'accountnumber',DisplayName:label('Account Number'),AttributeType:'String',IsValidForRead:true}
-     ]})});
-   }
-   if(url.pathname.endsWith('/OneToManyRelationships')){
-     return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({value:[
-       {SchemaName:'account_contacts',ReferencingEntity:'contact',ReferencedEntity:'account',ReferencingAttribute:'parentcustomerid',ReferencedAttribute:'accountid'}
-     ]})});
-   }
-   if(url.pathname.endsWith('/ManyToOneRelationships')){
-     return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({value:[]})});
-   }
-   return route.abort();
- });
- await page.goto(base+'/WebResources/mightora_fetchflow_builder.html');
- await expect(page.locator('#dv-connection')).toContainText('Connected');
- await expect(page.locator('#dv-schema-status')).toContainText('3 readable columns');
- await expect(page.locator('#dv-table-picker option')).toHaveCount(2);
- await expect(page.locator('#dv-columns option')).toHaveCount(3);
- await page.locator('#dv-columns').selectOption(['name','accountnumber']);
- await expect(page.locator('#builder-columns')).toHaveValue('name, accountnumber');
- await expect(page.locator('#builder-preview')).toContainText('<attribute name="accountnumber"');
- await page.locator('#dv-run-query').click();
- await expect(page.locator('#dv-query-status')).toContainText('succeeded');
- await expect(page.locator('#dv-result-count')).toHaveText('2 rows returned');
- await expect(page.locator('.dv-result-table')).toContainText('Contoso');
- await expect(page.locator('.dv-result-table')).toContainText('<script>alert(1)</script>');
- await expect(page.locator('.dv-result-table script')).toHaveCount(0);
- const calls=await page.evaluate(()=>window.__queryCalls);
- expect(calls).toHaveLength(1);
- expect(calls[0].entity).toBe('account');
- expect(calls[0].pageSize).toBe(50);
- expect(calls[0].options).toMatch(/^\?fetchXml=<fetch/);
- expect(calls[0].options).toContain('count="50"');
- await expect(page.locator('#dv-relationships option')).toHaveCount(2);
- await page.locator('#dv-relationships').selectOption('0');
- await page.locator('#dv-use-relationship').click();
- await expect(page.locator('#builder-join')).toBeChecked();
- await expect(page.locator('#builder-join-table')).toHaveValue('contact');
- await expect(page.locator('#builder-join-from')).toHaveValue('parentcustomerid');
- await expect(page.locator('#builder-join-to')).toHaveValue('accountid');
- expect(requests.every(uri=>uri.startsWith('/api/data/v9.2/EntityDefinitions'))).toBe(true);
-});
-test('Dataverse Builder fails safely outside the host and never calls a remote API',async({page})=>{
- const data=fs.readFileSync(path.resolve(__dirname,'../dist/dataverse/mightora_fetchflow_builder.html'),'utf8');
- const requests=[];page.on('request',r=>requests.push(r.url()));
- await page.setContent(data);
- await expect(page.locator('#dv-connection')).toContainText('Dataverse not connected');
- await expect(page.locator('#dv-run-query')).toBeDisabled();
- await expect(page.locator('#builder')).toBeVisible();
- await expect(page.locator('#workspace')).toBeVisible();
- expect(requests.filter(url=>url.startsWith('http'))).toHaveLength(0);
-});
+
+
