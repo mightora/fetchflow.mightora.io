@@ -15,11 +15,13 @@
     let xrm=null;
     try{xrm=root.Xrm||(root.parent&&root.parent.Xrm)||(root.top&&root.top.Xrm)||null;}catch{}
     if(!xrm||!xrm.WebApi||!xrm.Utility||typeof xrm.Utility.getGlobalContext!=='function')return null;
-    const base=xrm.Utility.getGlobalContext().getClientUrl();
-    const url=new URL(base);
-    // Never accept an injected cross-origin URL for queries or metadata.
-    if(url.origin!==root.location.origin)return null;
-    return {xrm,base:url.origin};
+    try{
+      const base=xrm.Utility.getGlobalContext().getClientUrl();
+      const url=new URL(base);
+      // Never accept an injected cross-origin URL for queries or metadata.
+      if(url.origin!==root.location.origin)return null;
+      return {xrm,base:url.origin};
+    }catch{return null;}
   }
   function prepareQuery(xml){
     if(typeof xml!=='string'||!xml.trim()||xml.length>MAX_XML_LENGTH||/<!\s*(?:DOCTYPE|ENTITY)/i.test(xml))throw Error('Provide safe FetchXML of at most 250 KB.');
