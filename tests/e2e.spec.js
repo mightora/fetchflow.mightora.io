@@ -49,3 +49,34 @@ test('visual composer generates valid FetchXML without losing existing diagram f
  expect(requests.filter(x=>x.startsWith('http'))).toHaveLength(0);
  expect(errors).toHaveLength(0);
 });
+
+test('Dataverse full-page resource is local, compact and preserves the visual builder',async({page})=>{
+ const requests=[],errors=[];
+ page.on('request',request=>requests.push(request.url()));
+ page.on('pageerror',error=>errors.push(error.message));
+ const dataverse=fs.readFileSync(path.resolve(__dirname,'../dist/dataverse/mightora_fetchflow_builder.html'),'utf8');
+ await page.setContent(dataverse);
+ await expect(page.locator('body')).toHaveClass(/dataverse-page/);
+ await expect(page.locator('.dv-page-logo')).toHaveAttribute('src',/^data:image\\//);
+ await expect(page.locator('.dv-page-heading h1')).toContainText('FetchFlow');
+ await expect(page.locator('mightora-header, mightora-footer, mightora-author')).toHaveCount(0);
+ await expect(page.locator('.hero')).toHaveCount(0);
+ await expect(page.locator('#builder')).toBeVisible();
+ await expect(page.locator('#metric-tables')).toHaveText('1');
+ await page.locator('#builder-all').uncheck();
+ await page.locator('#builder-columns').fill('name, accountnumber');
+ await page.locator('#builder-apply').click();
+ await expect(page.locator('#metric-fields')).toHaveText('2');
+ await expect(page.locator('#fetchxml')).toHaveValue(/attribute name="accountnumber"/);
+ await expect(page.locator('.diagram-visual svg')).toHaveCount(3);
+ expect(requests.filter(url=>url.startsWith('http'))).toHaveLength(0);
+ expect(errors).toHaveLength(0);
+});
+test('Dataverse full-page layout remains usable at tablet widths',async({page})=>{
+ await page.setViewportSize({width:820,height:900});
+ const dataverse=fs.readFileSync(path.resolve(__dirname,'../dist/dataverse/mightora_fetchflow_builder.html'),'utf8');
+ await page.setContent(dataverse);
+ await expect(page.locator('#builder-table')).toBeVisible();
+ await expect(page.locator('#builder-preview')).toBeVisible();
+ await expect(page.locator('#builder-apply')).toBeEnabled();
+});
