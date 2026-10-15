@@ -68,8 +68,30 @@
       });
     }
     $('network-refresh').addEventListener('click',network);
-    if(root.__OFFLINE__){$('offline-status').hidden=false;document.querySelectorAll('.online-only').forEach(x=>x.hidden=true);}if(root.__DATAVERSE__){$('offline-status').textContent='Dataverse web resource edition · Queries are composed locally, without reading Dataverse records or metadata.';}
-    selectExample('account-contact');sample.value='account-contact';network();setTimeout(network,1500);
+    if(root.__OFFLINE__){
+      const banner=$('offline-status');
+      if(banner && !root.__DATAVERSE_PAGE__)banner.hidden=false;
+      document.querySelectorAll('.online-only').forEach(x=>x.hidden=true);
+    }
+    if(root.__DATAVERSE_PAGE__){
+      // Full-page app starts with the same simple query shown in the visual
+      // composer, rather than an unrelated, advanced sample query.
+      let entity='account';
+      try{
+        const params=new URLSearchParams(root.location.search);
+        const context=params.get('data');
+        const details=context&&context.length<=1500?JSON.parse(context):null;
+        const candidate=details?.entityName||params.get('typename');
+        if(/^[A-Za-z_][A-Za-z0-9_]{0,127}$/.test(candidate||''))entity=candidate;
+      }catch{}
+      $('fetchxml').value=root.FetchXMLBuilder.serialize({entity,allColumns:true});
+      $('example-name').textContent='Starter query — use the visual builder above to customise it.';
+      sample.value='';
+      visualise();
+    }else{
+      selectExample('account-contact');sample.value='account-contact';
+    }
+    network();setTimeout(network,1500);
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })(window);

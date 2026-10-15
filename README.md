@@ -12,7 +12,7 @@ Paste FetchXML to produce three diagrams, a plain-English explanation, and docum
 ## What you get
 
 - **Visual FetchXML builder:** design a basic FetchXML query from table/column names, filter conditions, a linked table, sorting, distinct and top rows; preview and apply the query to the existing three-diagram visualiser. For complex queries the raw XML editor remains the source of truth.
-- **Dataverse web resources:** download one self-contained HTML builder, a compact form launcher and a command-bar JS library. Import as solution web resources to launch a native model-driven dialog. See [`dataverse/README.md`](dataverse/README.md) for setup. No live table metadata access or query execution is implied.
+- **Model-driven app full-page web resource:** download the self-contained HTML builder, add it as a Web resource page in your app, and show FetchFlow in the normal left-hand navigation. Optional dialog and form launchers remain available. See [`dataverse/README.md`](dataverse/README.md) for installation. No live Dataverse metadata access or query execution is implied.
 
 - **Source and relationship diagram:** root Dataverse table, related tables, alias names and matching `from`/`to` columns.
 - **Query-flow chart:** human-friendly interpretation of join stages, nested filter groups, sort order, aggregation and result shaping. Not an actual Dataverse execution plan.
@@ -75,7 +75,7 @@ Open a pull request to `examples/examples.json`. Provide `id`, `name`, `descript
 
 ## Dataverse integration
 
-Install the downloadable HTML/JavaScript web resources into a Dataverse solution. A native command-bar button is recommended; a form-embedded HTML launcher is also provided. The builder opens in a dialog using supported `Xrm.Navigation.navigateTo`, not an external GitHub Pages iframe. The ZIP is a **web-resource installer package**, not a ready-to-import Dataverse managed solution. For installation, naming, privacy and capabilities, read [the Dataverse setup guide](dataverse/README.md).
+Install the downloadable HTML web resource into a Dataverse solution, then use the model-driven app designer **Add page → Web resource** and enable **Show in navigation**. The page opens within the app shell rather than launching a separate marketing site. Optional command-bar and form-embedded HTML launchers use `Xrm.Navigation.navigateTo` for dialog access. The ZIP contains **web-resource source files**, not a ready-to-import managed solution. For installation, naming, privacy and capabilities, read [the Dataverse setup guide](dataverse/README.md).
 
 ## Limitations
 
