@@ -50,6 +50,7 @@ async function loadTables(){
    else url='';
   }
   tableList=items.filter(t=>nameRx.test(t.LogicalName||'')&&!t.IsPrivate).map(t=>({name:t.LogicalName,label:labels(t.DisplayName)||t.LogicalName})).sort((a,b)=>a.label.localeCompare(b.label));
+  $('all-tables').replaceChildren(...tableList.map(t=>option(t.name,t.label)));
   showTables();
   updateStatus('metadata-status',tableList.length+' tables available. Pick one to start.');
   if(tableList.some(t=>t.name==='account')){await loadFields('account');renderFields();}
