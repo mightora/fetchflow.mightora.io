@@ -86,7 +86,7 @@ test('public site shows direct web-resource downloads and model-driven app insta
  await expect(install).toContainText('not an importable Dataverse solution ZIP');
  await expect(install).toContainText('Show in navigation');
  const matchingHTML=fs.readFileSync(path.resolve(__dirname,'../dist/dataverse/mightora_fetchflow_builder.html'),'utf8');
- expect(matchingHTML).toContain('window.__DATAVERSE_PAGE__=true;');
+ expect(matchingHTML).toContain('id="builder-view"');
 });
 test('installation instructions work on narrow mobile layouts',async({page})=>{
  await page.setViewportSize({width:390,height:844});
