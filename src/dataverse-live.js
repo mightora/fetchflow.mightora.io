@@ -13,7 +13,7 @@
   };
   function getClient(){
     let xrm=null;
-    try{xrm=root.Xrm||(root.parent&&root.parent.Xrm)||null;}catch{}
+    try{xrm=root.Xrm||(root.parent&&root.parent.Xrm)||(root.top&&root.top.Xrm)||null;}catch{}
     if(!xrm||!xrm.WebApi||!xrm.Utility||typeof xrm.Utility.getGlobalContext!=='function')return null;
     const base=xrm.Utility.getGlobalContext().getClientUrl();
     const url=new URL(base);
@@ -96,8 +96,9 @@
     const tablePicker=$('dv-table-picker'),columns=$('dv-columns'),relations=$('dv-relationships');
     const useTable=$('dv-use-table'),reload=$('dv-refresh-columns'),useRelation=$('dv-use-relationship');
     const run=$('dv-run-query'),clear=$('dv-cancel-query');
+    const savedViews=$('dv-saved-views'),refreshViews=$('dv-refresh-views'),openView=$('dv-open-view');
     const client=getClient();
-    let tables=[],relationships=[],activeTable='',sequence=0,queryToken=0,loading=false;
+    let tables=[],relationships=[],views=[],activeTable='',sequence=0,queryToken=0,loading=false;
     const report=(element,message,error=false)=>{element.textContent=message;element.classList.toggle('dv-live-error',error);};
     const emit=element=>element.dispatchEvent(new Event('input',{bubbles:true}));
     function setConnection(ok,message){connection.textContent=message;connection.classList.toggle('is-connected',ok);}
@@ -205,6 +206,36 @@
         reload.disabled=false;
       }
     }
+    async function loadViews(){
+      refreshViews.disabled=true;
+      report(status,'Reading accessible Dataverse view definitions…');
+      // Read system and personal views separately: permission to read one
+      // category does not guarantee access to the other.
+      const queries=['savedquery','userquery'];
+      const results=await Promise.allSettled(queries.map(entity=>client.xrm.WebApi.online.retrieveMultipleRecords(entity,
+        '?$select=name,fetchxml,returnedtypecode&$orderby=name asc&$top=100',100)));
+      views=[];
+      results.forEach((result,index)=>{
+        if(result.status!=='fulfilled')return;
+        (result.value.entities||[]).forEach(view=>{
+          if(typeof view.fetchxml!=='string'||!view.fetchxml.trim()||view.fetchxml.length>MAX_XML_LENGTH)return;
+          views.push({name:view.name||'Unnamed view',source:queries[index]==='savedquery'?'System':'Personal',
+            entity:view.returnedtypecode||'',xml:view.fetchxml});
+        });
+      });
+      savedViews.replaceChildren();
+      const placeholder=document.createElement('option');placeholder.value='';
+      placeholder.textContent=views.length?'Select an accessible saved view':'No accessible views found';
+      savedViews.append(placeholder);
+      views.sort((a,b)=>a.name.localeCompare(b.name)).forEach((view,index)=>{
+        const opt=document.createElement('option');opt.value=String(index);
+        opt.textContent=view.source+' · '+view.name+(view.entity?' ('+view.entity+')':'');
+        savedViews.append(opt);
+      });
+      openView.disabled=true;refreshViews.disabled=false;
+      report(status,views.length?'Loaded '+views.length+' view definitions (up to 100 system and 100 personal). Select one to open its FetchXML.':
+        'No accessible view definitions. Check user roles, or use the XML editor to paste a query.',!views.length);
+    }
     async function executeQuery(){
       if(loading)return;
       let prepared;
@@ -251,6 +282,18 @@
       Object.keys(values).forEach(id=>{$(id).value=values[id];emit($(id));});
       report(status,'Added relationship '+r.display+'. Review its join type and selected fields below.');
     });
+    savedViews.addEventListener('change',()=>{openView.disabled=!savedViews.value;});
+    refreshViews.addEventListener('click',()=>void loadViews());
+    openView.addEventListener('click',()=>{
+      const view=views[Number(savedViews.value)];
+      if(!view)return;
+      $('fetchxml').value=view.xml;
+      $('dv-query-source').value='editor';
+      $('example-name').textContent='Loaded '+view.source.toLowerCase()+' view: '+view.name;
+      $('visualise').click();
+      report(queryStatus,'Loaded '+view.source.toLowerCase()+' view "'+view.name+'" into the XML editor. Press Run to test it live.');
+      $('workspace').scrollIntoView({behavior:'smooth',block:'start'});
+    });
     run.addEventListener('click',executeQuery);
     clear.addEventListener('click',()=>{
       ++queryToken;loading=false;run.disabled=false;clear.disabled=true;$('dv-query-results').hidden=true;
@@ -264,6 +307,7 @@
     }
     setConnection(true,'Connected · current Dataverse user');
     run.disabled=false;
+    refreshViews.disabled=false;
     void loadTables();
   }
   if(typeof module!=='undefined'&&module.exports)module.exports={prepareQuery};
