@@ -1,0 +1,49 @@
+<section id="dataverse-live" class="dv-live-workspace" aria-labelledby="dv-live-heading">
+  <div class="dv-live-intro">
+    <div><span class="dv-live-eyebrow">WORKSPACE 1 · CONNECTED DATAVERSE</span>
+      <h2 id="dv-live-heading">Live FetchXML Builder</h2>
+      <p>Discover tables and columns, build a query visually, and test it against the current Dataverse environment. Queries execute as the signed-in user.</p>
+    </div>
+    <span id="dv-connection" class="dv-live-connection" role="status" aria-live="polite">Checking Dataverse connection…</span>
+  </div>
+  <div class="dv-live-grid">
+    <section class="panel dv-live-card" aria-labelledby="dv-schema-heading">
+      <div class="dv-live-card-title"><h3 id="dv-schema-heading">1 · Explore the schema</h3><span>LIVE METADATA</span></div>
+      <label class="dv-live-label" for="dv-table-search">Find a table by display or logical name</label>
+      <input id="dv-table-search" class="dv-live-field" type="search" autocomplete="off" placeholder="Search environment tables…" aria-controls="dv-table-picker" />
+      <label class="dv-live-label" for="dv-table-picker">Matching tables</label>
+      <select id="dv-table-picker" class="dv-live-field" size="5" aria-label="Choose a Dataverse table"><option value="">Connect to Dataverse to discover tables</option></select>
+      <div class="dv-live-actions"><button id="dv-use-table" class="btn btn-primary" type="button" disabled>Use selected table</button><button id="dv-refresh-columns" class="btn" type="button" disabled>Refresh columns</button></div>
+      <label class="dv-live-label" for="dv-columns">Columns in selected table (select multiple)</label>
+      <select id="dv-columns" class="dv-live-field dv-live-multiselect" size="9" multiple aria-label="Dataverse columns to include in FetchXML"></select>
+      <p class="dv-live-help">Hold Ctrl (Windows) or Command (Mac) to select multiple columns. Selections populate the visual builder below.</p>
+      <label class="dv-live-label" for="dv-relationships">Optional relationship</label>
+      <select id="dv-relationships" class="dv-live-field"><option value="">Choose a relationship to populate the linked table</option></select>
+      <button id="dv-use-relationship" class="btn" type="button" disabled>Add relationship to builder</button>
+      <p id="dv-schema-status" class="dv-live-message" role="status" aria-live="polite">Table and column discovery will start when Dataverse is available.</p>
+    </section>
+    <section class="panel dv-live-card" aria-labelledby="dv-test-heading">
+      <div class="dv-live-card-title"><h3 id="dv-test-heading">2 · Test your FetchXML</h3><span>LIVE QUERY</span></div>
+      <label class="dv-live-label" for="dv-query-source">Query to execute</label>
+      <select id="dv-query-source" class="dv-live-field">
+        <option value="builder">Visual builder (generated FetchXML)</option>
+        <option value="editor">XML editor (including advanced FetchXML)</option>
+      </select>
+      <div class="dv-live-actions">
+        <button id="dv-run-query" class="btn btn-primary" type="button" disabled>Run FetchXML in Dataverse</button>
+        <button id="dv-cancel-query" class="btn" type="button" disabled>Clear results</button>
+      </div>
+      <div class="dv-live-limit" role="note"><strong>Read-only preview:</strong> up to 50 results from page one. Queries run against live Dataverse with your existing access rights. Large or complex queries can still consume server resources.</div>
+      <div id="dv-query-status" class="dv-live-message" role="status" aria-live="polite">Connect to Dataverse, then build or paste FetchXML.</div>
+      <div id="dv-query-results" class="dv-results" hidden>
+        <div class="dv-result-summary"><strong id="dv-result-count"></strong><span id="dv-result-more"></span></div>
+        <div class="dv-result-scroll"><table class="dv-result-table"><thead id="dv-result-head"></thead><tbody id="dv-result-body"></tbody></table></div>
+      </div>
+      <p class="dv-live-help">Results stay in this browser view. They are not sent to Mightora or automatically saved. Use the Explorer below to understand joins, filters and lineage.</p>
+    </section>
+  </div>
+  <div class="dv-live-handoff">
+    <div><strong>Workspace 2 · Explorer &amp; troubleshooting</strong><p>Already have FetchXML? Paste it into the XML editor below for diagrams, explanations and editable exports. This workspace works without running queries.</p></div>
+    <a href="#workspace" class="btn">Open FetchXML Explorer →</a>
+  </div>
+</section>
