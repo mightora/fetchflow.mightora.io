@@ -45,7 +45,7 @@ test('builder shows only the clean query canvas, not the explorer panels',async(
  await mockedDataverse(page);
  await expect(page.locator('.query-canvas .query-card')).toHaveCount(1);
  await expect(page.locator('#builder-view')).toBeVisible();
- await expect(page.locator('#xml-view,#results-view,#visual-view')).toBeHidden();
+ for(const id of ['xml-view','results-view','visual-view'])await expect(page.locator('#'+id)).toBeHidden();
  await expect(page.locator('mightora-author,.hero,.quick-jump-nav')).toHaveCount(0);
 });
 test('drag fields onto base and linked entities, set filters, execute and inspect XML and diagrams',async({page})=>{
