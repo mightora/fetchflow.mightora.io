@@ -1,0 +1,24 @@
+/* Full-page Dataverse web resource. Same core visualiser, no public-site chrome. */
+body.dataverse-page{margin:0;background:var(--wash);min-width:280px}
+.dataverse-page .container{width:min(1650px,calc(100% - 44px))}
+.dv-page-header{background:linear-gradient(112deg,#102e40,#174e60);color:#fff;border-bottom:3px solid var(--fb-primary)}
+.dv-page-bar{display:flex;align-items:center;gap:24px;padding:19px 0}
+.dv-page-logo{width:168px;max-height:50px;height:auto;object-fit:contain;flex-shrink:0}
+.dv-page-heading{flex:1;min-width:0}
+.dv-page-eyebrow{font-size:10px;font-weight:800;letter-spacing:.16em;color:#a2e9df}
+.dv-page-heading h1{color:#fff;margin:1px 0;font-size:clamp(21px,2.1vw,29px);line-height:1.2}
+.dv-page-heading h1 span{font-weight:500;color:#b8e6e0}
+.dv-page-heading p{font-size:12px;color:#d5e9ec;margin:3px 0 0}
+.dv-page-assurance{white-space:nowrap;font-size:12px;background:#ffffff17;border:1px solid #ffffff44;padding:7px 11px;border-radius:99px;font-weight:650}
+.dv-page-assurance span{color:#84e5c6;margin-right:3px}
+.dataverse-page .quick-jump-nav{top:0;box-shadow:0 2px 8px #14384a10}
+.dataverse-page main{padding:10px 0 45px}
+.dataverse-page #builder{margin-bottom:24px}
+.dataverse-page .section-head{margin:20px 0 11px}
+.dataverse-page .builder-grid{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)}
+.dataverse-page .builder-code{min-height:230px;max-height:550px}
+.dataverse-page .panel{box-shadow:0 5px 18px rgba(24,56,75,.045)}
+.dataverse-page #exports{margin-top:20px}
+.dataverse-page #status{position:absolute}
+@media(max-width:1150px){.dataverse-page .builder-grid{grid-template-columns:1fr}.dataverse-page .builder-controls{border-right:0;border-bottom:1px solid var(--line)}}
+@media(max-width:740px){.dv-page-bar{gap:10px;flex-wrap:wrap;padding:13px 0}.dv-page-logo{width:130px;max-height:35px}.dv-page-heading{min-width:160px}.dv-page-heading h1{font-size:21px}.dv-page-assurance{width:100%;text-align:center}.dataverse-page .container{width:calc(100% - 26px)}.dataverse-page main{padding-top:3px}}
