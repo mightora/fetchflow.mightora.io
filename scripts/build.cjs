@@ -69,8 +69,8 @@ function assemble(offline,dataverse=false){
  // Form launcher is a small, locally executable HTML web resource. Hash its
  // static inline CSS/JS instead of allowing unrestricted inline content.
  let launcher=read('dataverse/launcher.template.html').replace('<!--BRAND_LOGO-->',logo);
- const launcherStyle=launcher.match(/<style>([\s\S]*?)<\/style>/)[1];
- const launcherScript=launcher.match(/<script>([\s\S]*?)<\/script>/)[1];
+ const launcherStyle=launcher.match(/<style\b[^>]*>([\s\S]*?)<\/style\s*>/i)[1];
+ const launcherScript=launcher.match(/<script\b[^>]*>([\s\S]*?)<\/script\s*>/i)[1];
  const launchCsp="default-src 'none'; script-src "+hash(launcherScript)+"; style-src "+hash(launcherStyle)+"; img-src data:; connect-src 'none'; object-src 'none'; frame-src 'none'; form-action 'none'; base-uri 'none'";
  launcher=launcher.replace('<!--LAUNCHER_CSP-->', '<meta http-equiv="Content-Security-Policy" content="'+launchCsp+'" />');
  fs.writeFileSync(path.join(dist,'dataverse/mightora_fetchflow_launcher.html'),launcher);

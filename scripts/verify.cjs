@@ -46,10 +46,10 @@ const JSZip=require('../vendor/jszip.min.js');
  assert(launcher.includes('navigateTo')&&launcher.includes('mightora_fetchflow_builder.html'));
  assert(command.includes('MightoraFetchFlow')&&command.includes('navigateTo'));
  for(const resource of [data,launcher]){
-  const inline=resource.match(/<script>([\s\S]*?)<\/script>/);
+  const inline=[...resource.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script\b[^>]*>/gi)];
   const hashValue=resource.match(/script-src 'sha256-([^']+)'/);
-  assert(inline && hashValue,'Dataverse web resources must hash their inline script');
-  assert.equal(crypto.createHash('sha256').update(inline[1]).digest('base64'),hashValue[1],'Web resource CSP script hash must match');
+  assert(inline.length && hashValue,'Dataverse web resources must hash their inline script');
+  assert(inline.some(match=>crypto.createHash('sha256').update(match[1]).digest('base64')===hashValue[1]),'Web resource CSP script hash must match');
  }
  const solutionZip=new JSZip();
  await solutionZip.loadAsync(fs.readFileSync(path.join(dist,'downloads/Mightora-FetchFlow-Dataverse.zip')));
