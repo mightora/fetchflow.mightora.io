@@ -37,7 +37,6 @@ const JSZip=require('../vendor/jszip.min.js');
  assert(online.includes('not</strong> an importable Dataverse solution ZIP'),'Avoid representing web resource ZIP as an importable solution');
  assert(!offline.includes('id="model-driven"'),'Website-only installer must not ship inside offline HTML');
  assert(!offline.includes('href="#model-driven"'),'Offline navigation must not point to removed installer');
-
  assert(online.includes('footer\\.ya?ml'),'Required shared YAML normalisation workaround must remain');
  assert(offline.includes('class="portable-footer"'),'Standalone offline HTML must have the Mightora footer');
  assert(offline.includes('class="portable-footer-logo"'),'Portable footer must embed the official logo');
