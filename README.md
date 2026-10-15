@@ -12,7 +12,7 @@ Paste FetchXML to produce three diagrams, a plain-English explanation, and docum
 ## What you get
 
 - **Visual FetchXML builder:** design a basic FetchXML query from table/column names, filter conditions, a linked table, sorting, distinct and top rows; preview and apply the query to the existing three-diagram visualiser. For complex queries the raw XML editor remains the source of truth.
-- **Model-driven app full-page web resource:** download the self-contained HTML builder, add it as a Web resource page in your app, and show FetchFlow in the normal left-hand navigation. Optional dialog and form launchers remain available. See [`dataverse/README.md`](dataverse/README.md) for installation. No live Dataverse metadata access or query execution is implied.
+- **Model-driven app full-page web resource:** the [FetchFlow website now provides the HTML web resource, ZIP downloads and full step-by-step installation instructions](https://fetchflow.mightora.io/#model-driven). Add the self-contained HTML as a Web resource page in your app and show FetchFlow in the normal left-hand navigation. Optional dialog and form launchers remain available. See [`dataverse/README.md`](dataverse/README.md) for advanced details. No live Dataverse metadata access or query execution is implied.
 
 - **Source and relationship diagram:** root Dataverse table, related tables, alias names and matching `from`/`to` columns.
 - **Query-flow chart:** human-friendly interpretation of join stages, nested filter groups, sort order, aggregation and result shaping. Not an actual Dataverse execution plan.
