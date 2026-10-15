@@ -237,7 +237,7 @@ test('Dataverse Builder discovers live metadata, builds and tests read-only Fetc
  await expect(page.locator('#dv-table-picker option')).toHaveCount(2);
  await expect(page.locator('#dv-columns option')).toHaveCount(3);
  await page.locator('#dv-columns').selectOption(['name','accountnumber']);
- await expect(page.locator('#builder-columns')).toHaveValue('accountnumber, name');
+ await expect(page.locator('#builder-columns')).toHaveValue('name, accountnumber');
  await expect(page.locator('#builder-preview')).toContainText('<attribute name="accountnumber"');
  await page.locator('#dv-run-query').click();
  await expect(page.locator('#dv-query-status')).toContainText('succeeded');
