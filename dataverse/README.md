@@ -1,32 +1,39 @@
-# FetchFlow for Dataverse — Live Builder + Visual Explorer
+# FetchFlow for Dataverse — Visual Query Designer
 
-FetchFlow provides **two complementary workspaces**:
+The Dataverse HTML web resource opens directly in a **clean FetchXML Builder**. The earlier all-in-one Explorer layout is no longer embedded. Instead, the three main actions are available from the top bar: **Execute query**, **View FetchXML**, and **Visualise**. The public/portable FetchFlow Explorer remains separate and unchanged.
 
-1. **Live FetchXML Builder (Dataverse web resource):** Discover environment tables and readable attributes; pick columns; select a metadata-defined relationship; build or paste FetchXML; and execute a **read-only query** using the current signed-in model-driven app user. It displays up to 50 returned records, without saving the results.
-2. **FetchXML Explorer (web, offline and Dataverse):** Paste existing FetchXML and troubleshoot the query structure through source/relationship diagrams, pipeline flows, field lineage, explanations and exports. The public GitHub Pages app and offline edition **never connect** to Dataverse.
+## Builder workflow
 
-The Dataverse HTML web resource contains both workspaces, with the connected Builder prominently shown first. The Explorer is also available below the Builder.
+1. Choose a Dataverse table from the searchable sidebar. FetchFlow loads its fields from metadata in the current environment.
+2. **Drag and drop fields** into that table's Selected fields area, or press **+** beside a field. Click **Show fields** on any card to switch the sidebar to that table. Click × to remove a field.
+3. Press **+ Linked entity** on a table card to add a relationship. FetchFlow suggests metadata-defined joins where available. You can edit the related table, from/to columns, join type and alias. Add multiple linked entities, including nested links (up to 14).
+4. Press **+ Add condition** on any table or linked entity, then set its filter column, operator and value. Choose AND/OR per table.
+5. Set preview row count (1–50), distinct, and sort.
+6. Press **Execute query** to run the FetchXML with the signed-in user's privileges and inspect up to 50 results. A platform error appears in the results area for troubleshooting.
+7. Press **View FetchXML** to inspect/copy/download generated XML. Choose Edit XML for unsupported advanced constructs. The separate source is preserved if it cannot be safely imported into the visual model.
+8. Press **Visualise** to display the table relationship, query-flow and field-lineage diagrams for the currently generated or manually edited XML. This structural view does not execute the query.
 
-## Install the full-page web resource in a model-driven app
+The builder uses native HTML drag-and-drop on desktop and a click-to-add alternative for touch, keyboard and mobile users. It does not save records or modify views.
 
-1. Download https://fetchflow.mightora.io/downloads/Mightora-FetchFlow-Dataverse.zip and extract it; or download the direct `mightora_fetchflow_builder.html` web resource.
-2. Go to https://make.powerapps.com/ > **Solutions** and open your unmanaged solution. Select **New → More → Web resource**, type **Webpage (HTML)**, and upload `mightora_fetchflow_builder.html`.
-3. Give it a friendly display name such as **FetchFlow — Live FetchXML Builder and Explorer**. Save, then **Publish**. Check the complete web resource name, including your publisher's customisation prefix.
-4. Edit your model-driven app → **Pages → New → Web resource**, select this web resource, and enable **Show in navigation**.
-5. Name the page **FetchXML Builder** and place it in a relevant group, such as **Developer Tools**. Save and publish the model-driven app.
-6. Run the app as a user who has the appropriate Dataverse privileges. The Live Builder will discover metadata in **that environment**. You can then select a table/columns and execute a query. The read-only query executes as that user.
+## Install in a model-driven app
 
-**The download ZIP is not a Dataverse solution ZIP.** Add its HTML file as a web resource to an unmanaged solution, and export your solution normally for managed ALM.
+1. Download the latest [Dataverse ZIP](https://fetchflow.mightora.io/downloads/Mightora-FetchFlow-Dataverse.zip), or the [standalone HTML web resource](https://fetchflow.mightora.io/dataverse/mightora_fetchflow_builder.html).
+2. In [Power Apps](https://make.powerapps.com/) > Solutions, open an unmanaged solution and create a **Webpage (HTML)** web resource using `mightora_fetchflow_builder.html`. Save and publish; observe your publisher prefix in the final resource name.
+3. Edit the model-driven app → **Pages → New → Web resource**. Select the new resource and enable **Show in navigation**.
+4. Set the title to **FetchXML Builder**, save, publish and test with an appropriately permissioned user.
+5. When updating an existing installation, replace the HTML contents of the same resource and publish; no navigation rebuild is required.
 
-## Live Builder capabilities
+The downloadable ZIP contains individual web resources, **not** a managed solution ZIP. The optional form launcher and command script remain included for dialog opening. Update their embedded resource name if your solution publisher uses a different prefix.
 
-- **Metadata discovery:** reads Dataverse `EntityDefinitions` and table `Attributes` on the same Dataverse origin using a browser session that is already authenticated by Microsoft. The table picker searches display and logical names.
-- **Column selection:** readable columns are selected in a multi-select list and populate the visual composer. Simple starter queries select explicit columns rather than `all-attributes`.
-- **Relationship suggestions:** reads one-to-many and many-to-one relationship metadata where permitted, then populates the linked table's `from` and `to` keys. Check join semantics and types before running.
-- **Visual composition:** shares the supported FetchXML composer with the public app: root table, selected columns, basic AND/OR filters, one linked entity, sorting, distinct and top. Imported advanced XML continues to be editable in the full XML editor.
-- **Live query execution:** executes either the visual builder's generated FetchXML or the raw XML editor's query with `Xrm.WebApi.online.retrieveMultipleRecords`, using **raw, unencoded FetchXML**. Live results display in a scrollable table. The execution copy is bounded to the first 50 records; if a `top` attribute exists it is capped at 50 for the preview.
-- **Results and errors:** displays query result values as **text**, not HTML, including formatted labels when available. An error from the platform is shown in the tool for troubleshooting. Results are kept in the current browser page and can be cleared.
-- **Read saved queries:** choose **Find saved views** to load the FetchXML of accessible system or personal Dataverse views into the editor (up to 100 of each kind). This is a read-only operation; views are not changed.\n- **Visual Explorer:** all existing diagrams, explanations and editable exports remain available alongside the Builder.
+## Capabilities and limitations
+
+- Dataverse metadata is read from `EntityDefinitions`, including table/column labels and one-to-many/many-to-one relationship suggestions. Those calls stay on the web resource's authenticated Dataverse origin.
+- Query execution uses `Xrm.WebApi.online.retrieveMultipleRecords` with raw FetchXML and the signed-in user. Preview is capped at 50 rows; complex queries still consume server resources. The app never performs a Dataverse write.
+- You may compose multiple relationships and basic filter conditions visually. Complex aggregates, nested filter groups, custom entity attributes and unsupported FetchXML constructs should be edited in the XML source view. Unsupported import does **not** silently simplify the query.
+- Results are rendered as text, not HTML. The result preview isn't persisted in local storage or sent to Mightora. User-triggered XML downloads go to the user's device.
+- If metadata access fails, table discovery won't populate; XML source mode and visualisation still work. Live Execute requires a valid Microsoft `Xrm` host and Dataverse connectivity.
+- The document, HTML, JS, CSS and logo are self-contained in the web resource. Its content security policy restricts metadata traffic to the Dataverse origin.
+- Browser behaviour and user permissions should be tested in a real tenant before wider rollout. Automated tests mock Dataverse and cannot prove tenant compatibility.
 
 ## Security and privacy
 
