@@ -70,7 +70,7 @@ const JSZip=require('../vendor/jszip.min.js');
  assert(data.includes('alt="Mightora"')&&data.includes('src="data:image/'),'Mightora logo must be inlined');
  assert(data.includes('class="app-footer"'),'Simple self-contained Mightora footer must exist');
  assert(!online.includes('id="builder-view"')&&!offline.includes('id="builder-view"'),'Standalone Explorer editions must remain unchanged');
- const cssBlock=data.match(/<style>([\\s\\S]*?)<\\/style>/);
+ const cssBlock=data.match(/<style>([\s\S]*?)<\/style>/);
  const cssHash=data.match(/style-src 'sha256-([^']+)'/);
  assert(cssBlock&&cssHash);
  assert.equal(crypto.createHash('sha256').update(cssBlock[1]).digest('base64'),cssHash[1],'Dataverse CSS hash must match');
