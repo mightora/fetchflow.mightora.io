@@ -20,6 +20,15 @@
       <label class="dv-live-label" for="dv-relationships">Optional relationship</label>
       <select id="dv-relationships" class="dv-live-field"><option value="">Choose a relationship to populate the linked table</option></select>
       <button id="dv-use-relationship" class="btn" type="button" disabled>Add relationship to builder</button>
+      <div class="dv-live-saved-views">
+        <label class="dv-live-label" for="dv-saved-views">Read an existing Dataverse view (optional)</label>
+        <select id="dv-saved-views" class="dv-live-field"><option value="">Load system or personal view definitions</option></select>
+        <div class="dv-live-actions">
+          <button id="dv-refresh-views" class="btn" type="button" disabled>Find saved views</button>
+          <button id="dv-open-view" class="btn" type="button" disabled>Open view FetchXML in editor</button>
+        </div>
+        <p class="dv-live-help">Loads the FetchXML definition of an accessible system or personal view. It does not modify the view. You can then test its XML live or explore its structure.</p>
+      </div>
       <p id="dv-schema-status" class="dv-live-message" role="status" aria-live="polite">Table and column discovery will start when Dataverse is available.</p>
     </section>
     <section class="panel dv-live-card" aria-labelledby="dv-test-heading">
