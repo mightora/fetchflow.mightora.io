@@ -29,6 +29,18 @@ const JSZip=require('../vendor/jszip.min.js');
  assert(online.includes('class="site-footer__note"'),'The shared footer must include its standard note');
  assert(online.includes('normaliseSharedFooterLinks'),'Root-relative shared links must resolve to mightora.io');
  assert(online.includes('id="model-driven"'),'Public website must include Dataverse install guide');
+ assert(online.includes('class="hero hero-builder"'),'Online homepage must lead with Dataverse Builder');
+ assert(online.includes('class="btn hero-primary"'),'Builder must be the primary hero call to action');
+ assert(online.includes('id="browser-tools"'),'Browser Explorer must be clearly distinguished from live Dataverse Builder');
+ assert(online.indexOf('id="model-driven"')<online.indexOf('id="builder"'),'Downloadable Dataverse Builder must precede browser demo');
+ assert(online.includes('class="install-overview"'),'Simple three-step installation must be visible before detailed steps');
+ assert(online.includes('class="install-detail-guide"'),'Full six-step install must remain accessible');
+ assert(!online.includes('<!--OFFLINE_HERO_START-->'),'Online must exclude portable-only hero');
+ assert(offline.includes('Explore FetchXML')&&offline.includes('without a Dataverse connection'),'Offline edition must clearly advertise only the offline Explorer');
+ assert(!offline.includes('class="hero hero-builder"'),'Offline edition must not advertise live Builder as available locally');
+ assert(!offline.includes('id="browser-tools"'),'Offline edition must avoid website-only Explorer prompt');
+ assert(!offline.includes('<!--ONLINE_HERO_START-->'),'Portable edition must not contain public hero');
+
  assert(online.includes('id="install-heading"'),'Dataverse guide must have a section heading');
  assert(online.includes('href="#model-driven"'),'Public site must link to install guide from navigation');
  assert(online.includes('href="dataverse/mightora_fetchflow_builder.html" download='),'Direct HTML web resource download must be on site');

@@ -4,15 +4,15 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="theme-color" content="#102e40" />
-<meta name="description" content="Free FetchFlow FetchXML builder and visualiser with a downloadable HTML web resource and installation guide for model-driven Power Apps. Paste FetchXML to see table relationships, filtering, query flow, field lineage, plain-English explanations and editable PowerPoint and Word exports. Works offline." />
+<meta name="description" content="Download FetchFlow Builder as a free Dataverse HTML web resource for model-driven Power Apps. Build FetchXML visually with live table metadata, linked entities, filters and query execution. Also explore and troubleshoot FetchXML online or offline." />
 <meta name="keywords" content="FetchXML builder web resource, FetchXML model-driven app page, FetchXML visualiser, FetchXML diagram, Dataverse query, FetchXML join, Power Platform, FetchXML to PowerPoint, FetchXML explanation, FetchXML flowchart" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="FetchFlow | Mightora" />
-<meta property="og:description" content="Build FetchXML queries visually, create relationship diagrams and export editable documentation in your browser." />
+<meta property="og:description" content="Install a visual FetchXML Builder in your model-driven Power App. Discover Dataverse tables, add fields and filters, execute queries and visualise FetchXML." />
 <meta property="og:url" content="https://fetchflow.mightora.io/" />
 <link rel="canonical" href="https://fetchflow.mightora.io/" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23102e40'/%3E%3Cpath d='M14 18h13v28H14zm23 0h13v28H37z' fill='%238ee0d7'/%3E%3C/svg%3E" />
-<title>FetchFlow – Understand Dataverse Queries | Mightora</title>
+<title>FetchFlow Builder for Dataverse Model-Driven Apps | Mightora</title>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Mightora FetchFlow","applicationCategory":"DeveloperApplication","operatingSystem":"Web browser, Windows, macOS, Linux","description":"Build and analyse FetchXML, create relationship diagrams, process flowcharts, field lineage diagrams and editable document exports.","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"publisher":{"@type":"Organization","name":"Mightora","url":"https://mightora.io"}}</script>
 <!--BUILD_CSP-->
 <!--BRAND_STYLE-->
@@ -21,16 +21,99 @@
 </head>
 <body>
 <!--ONLINE_HEADER_START-->
-<mightora-header site-name="FetchFlow" site-url="/" logo-light="https://raw.githubusercontent.com/mightora/mightora.io/main/static/images/mightoraIoLogo4-200x900.png" logo-dark="https://raw.githubusercontent.com/mightora/mightora.io/main/static/images/mightoraIoLogo4-200x900.png" nav-links='[{"label":"Build XML","url":"#builder"},{"label":"Visualise","url":"#workspace"},{"label":"Diagrams","url":"#diagrams"},{"label":"Exports","url":"#exports"},{"label":"Install in Power Apps","url":"#model-driven"},{"label":"Privacy","url":"#privacy"},{"label":"Mightora.io ↗","url":"https://mightora.io","ext":true}]'></mightora-header>
+<mightora-header site-name="FetchFlow" site-url="/" logo-light="https://raw.githubusercontent.com/mightora/mightora.io/main/static/images/mightoraIoLogo4-200x900.png" logo-dark="https://raw.githubusercontent.com/mightora/mightora.io/main/static/images/mightoraIoLogo4-200x900.png" nav-links='[{"label":"Get Dataverse Builder","url":"#model-driven"},{"label":"Try Explorer","url":"#browser-tools"},{"label":"Exports","url":"#exports"},{"label":"Help & Privacy","url":"#privacy"},{"label":"Mightora.io ↗","url":"https://mightora.io","ext":true}]'></mightora-header>
 <!--ONLINE_HEADER_END-->
 <!--OFFLINE_HEADER-->
 <div id="offline-status" class="offline-banner" hidden><div class="container">Offline Edition – No Internet Connection Required. All processing stays on this device.</div></div>
-<nav class="quick-jump-nav" aria-label="On-page navigation"><div class="container jump-inner"><a href="#builder">01 · Build XML</a><a href="#workspace">02 · Editor</a><a href="#explain">03 · Explanation</a><a href="#diagrams">04 · Diagrams</a><a href="#lineage">05 · Data lineage</a><a href="#exports">06 · Export</a><a href="#model-driven">07 · Power Apps setup</a><a href="#privacy">08 · Privacy & help</a></div></nav>
-<section class="hero"><div class="container"><div class="eyebrow">MIGHTORA · POWER PLATFORM ENGINEERING TOOLS</div><h1>Build FetchXML and <span>make it easy to understand.</span></h1><p>Build a FetchXML query visually, or paste one to explore where the data comes from, how relationships work, how rows are filtered, and what fields end up in your result. Export diagrams you can actually edit.</p><div class="hero-info"><span>✓ No Dataverse connection</span><span>✓ Three live diagrams</span><span>✓ Editable PPTX + DOCX</span><span>✓ Six worked examples</span><span>✓ Browser-only analysis</span></div><p class="hero-install-cta"><a href="#model-driven">Install FetchFlow in a model-driven app <span aria-hidden="true">→</span></a></p></div></section>
+<nav class="quick-jump-nav" aria-label="On-page navigation"><div class="container jump-inner"><a href="#model-driven">01 · Get Dataverse Builder</a><a href="#browser-tools">02 · Try Explorer</a><a href="#exports">03 · Exports</a><a href="#privacy">04 · Help &amp; privacy</a></div></nav>
+<!--ONLINE_HERO_START-->
+<section class="hero hero-builder"><div class="container">
+  <div class="eyebrow">MIGHTORA · DATAVERSE DEVELOPER TOOLS</div>
+  <h1>A visual FetchXML Builder <span>inside your model-driven app.</span></h1>
+  <p>Download the HTML web resource, add it to your Dataverse app, then build and test FetchXML with live tables, fields, relationships and filters. No separate hosting required.</p>
+  <div class="hero-actions">
+    <a class="btn hero-primary" href="dataverse/mightora_fetchflow_builder.html" download="mightora_fetchflow_builder.html">Download Dataverse Builder <span aria-hidden="true">↓</span></a>
+    <a class="btn hero-secondary" href="#model-driven">How to install <span aria-hidden="true">→</span></a>
+  </div>
+  <p class="hero-support">Just want to inspect existing FetchXML? <a href="#browser-tools">Use the free browser-based Explorer →</a> No Dataverse connection needed.</p>
+</div></section>
+<!--ONLINE_HERO_END-->
+<!--OFFLINE_HERO_START-->
+<section class="hero"><div class="container">
+  <div class="eyebrow">MIGHTORA · OFFLINE FETCHXML EXPLORER</div>
+  <h1>Explore FetchXML <span>without a Dataverse connection.</span></h1>
+  <p>Inspect existing queries, understand joins and filters, visualise table relationships and export editable diagrams. Everything runs locally in your browser.</p>
+  <div class="hero-info"><span>✓ Offline, no network required</span><span>✓ Three query diagrams</span><span>✓ Editable PowerPoint and Word exports</span></div>
+</div></section>
+<!--OFFLINE_HERO_END-->
 <main><div class="container">
+<!--ONLINE_INSTALL_START-->
+<section id="model-driven" class="install-section" aria-labelledby="install-heading">
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">MIGHTORA · DATAVERSE WEB RESOURCE</div>
+      <h2 id="install-heading">Get the Builder for your model-driven app</h2>
+      <p>Install the web resource in your Power App to build, execute and visualise FetchXML using the Dataverse environment you are already signed in to.</p>
+    </div>
+  </div>
+  <div class="install-layout">
+    <article class="panel install-download" aria-labelledby="install-download-heading">
+      <span class="install-kicker">SELF-CONTAINED HTML WEB RESOURCE</span>
+      <h3 id="install-download-heading">FetchFlow Builder for Dataverse</h3>
+      <p>A self-contained HTML web resource for model-driven apps. Drag in fields, add joins and filters, execute live queries and view the generated FetchXML.</p>
+      <div class="install-filename"><span>Web resource file</span><code>mightora_fetchflow_builder.html</code></div>
+      <div class="install-download-actions">
+        <a class="btn btn-primary" href="dataverse/mightora_fetchflow_builder.html" download="mightora_fetchflow_builder.html">Download Builder HTML <span aria-hidden="true">↓</span></a>
+        <a class="btn" href="downloads/Mightora-FetchFlow-Dataverse.zip" download>Download ZIP instead <span aria-hidden="true">↓</span></a>
+      </div>
+      <p class="install-support">The ZIP also includes the optional form launcher, command-bar JavaScript, installation guide and MIT licence. It is <strong>not</strong> an importable Dataverse solution ZIP.</p>
+      <div class="install-capabilities" aria-label="Web resource properties">
+        <span>✓ No CDN dependencies</span>
+        <span>✓ No external hosting</span>
+        <span>✓ Live read-only Dataverse query tests</span><span>✓ On-demand query diagrams</span>
+      </div>
+    </article>
+    <article class="panel install-walkthrough" aria-labelledby="install-steps-heading">
+      <h3 id="install-steps-heading">Get started in three steps</h3>
+      <ol class="install-overview">
+  <li><strong>Download the Builder</strong><span>Get the HTML web resource using the button on the left.</span></li>
+  <li><strong>Add it to Dataverse</strong><span>Upload it to an unmanaged solution as a <strong>Webpage (HTML)</strong> web resource, then publish.</span></li>
+  <li><strong>Put it in your app</strong><span>Add a Web resource page to your model-driven app and publish. You're ready to build and execute queries.</span></li>
+</ol>
+<details class="install-detail-guide"><summary>Show all six installation steps</summary><ol class="install-steps">
+        <li><strong>Download the HTML</strong><span>Use the file on the left, or extract it from the Dataverse ZIP.</span></li>
+        <li><strong>Create a web resource</strong><span>Go to <a href="https://make.powerapps.com/" target="_blank" rel="noopener noreferrer">Power Apps</a> → <strong>Solutions</strong> → your unmanaged solution → <strong>New → More → Web resource</strong>. Choose <strong>Webpage (HTML)</strong>, upload the file and save.</span></li>
+        <li><strong>Publish the web resource</strong><span>Check its full name after saving and select <strong>Publish</strong>. Your publisher's customization prefix is added automatically.</span></li>
+        <li><strong>Add it to your model-driven app</strong><span>Open the app designer → <strong>Pages → New → Web resource</strong>, and select the FetchFlow web resource.</span></li>
+        <li><strong>Show it in navigation</strong><span>Keep <strong>Show in navigation</strong> selected and give the page a title such as <strong>FetchXML Builder</strong>.</span></li>
+        <li><strong>Save, publish and test</strong><span>Open the model-driven app, select <strong>FetchXML Builder</strong>, discover tables and run a read-only query as the signed-in user. Use the Explorer below for offline analysis.</span></li>
+      </ol></details>
+    </article>
+  </div>
+  <div class="install-notice" role="note">
+    <strong>Live Dataverse access:</strong> The installed Builder reads table, column and relationship metadata and runs read-only FetchXML using the signed-in user's permissions. Results may contain sensitive records; preview is capped at 50 rows. The separate Explorer works offline without a Dataverse connection. Nothing is automatically saved or sent to Mightora.
+  </div>
+  <details class="panel install-alternative">
+    <summary>Prefer to launch FetchFlow from a form button or command bar?</summary>
+    <div class="install-alternative-content">
+      <p>The same HTML builder also works in a model-driven app dialog. The downloadable ZIP contains <code>mightora_fetchflow_launcher.html</code> for a form button and <code>mightora_fetchflow_command.js</code> for an optional command-bar action using <code>MightoraFetchFlow.openBuilder</code>.</p>
+      <p>If the solution publisher gives your web resource a different name, update the builder resource name in either optional launcher before using it. Neither launcher is necessary for full-page navigation.</p>
+    </div>
+  </details>
+  <p class="install-references">Detailed instructions: <a href="https://github.com/mightora/fetchflow.mightora.io/blob/main/dataverse/README.md" target="_blank" rel="noopener noreferrer">FetchFlow Dataverse installation guide ↗</a> · <a href="https://learn.microsoft.com/en-us/power-apps/maker/model-driven-apps/create-remove-pages" target="_blank" rel="noopener noreferrer">Microsoft documentation: model-driven app pages ↗</a></p>
+</section>
+<!--ONLINE_INSTALL_END-->
 
+
+<section id="browser-tools" class="browser-intro" aria-labelledby="browser-intro-title">
+  <div><div class="eyebrow">OPTIONAL · BROWSER-BASED EXPLORER</div>
+    <h2 id="browser-intro-title">Need to understand existing FetchXML?</h2>
+    <p>Use the free Explorer below to inspect, visualise and troubleshoot queries without connecting to Dataverse. It also includes a simple, schema-independent XML composer.</p>
+  </div>
+  <a class="btn" href="#workspace">Jump to the XML Explorer <span aria-hidden="true">→</span></a>
+</section>
 <section id="builder" aria-labelledby="builder-heading">
-  <div class="section-head"><div><div class="eyebrow">VISUAL QUERY COMPOSER</div><h2 id="builder-heading">Build FetchXML without writing XML</h2><p>Select a table and columns, add conditions and an optional related table, then apply the generated XML to the existing visualiser. This is a local, schema-agnostic starter builder; validate column names and join keys against your environment.</p></div></div>
+  <div class="section-head"><div><div class="eyebrow">OPTIONAL BROWSER DEMO · NO DATAVERSE CONNECTION</div><h2 id="builder-heading">Try the simple XML composer</h2><p>This browser-only composer accepts logical names manually. To pick real Dataverse tables and fields, build relationships and execute live queries, <a href="#model-driven">install the Dataverse Builder</a>.</p></div></div>
   <div class="panel builder-panel">
     <div class="builder-grid">
       <div class="builder-controls">
@@ -74,7 +157,7 @@
   </div>
 </section>
 
-<section id="workspace"><div class="section-head"><div><h2>Explore your FetchXML</h2><p>Choose a sample to learn the patterns, or paste your own query. Diagrams update as you type.</p></div></div>
+<section id="workspace"><div class="section-head"><div><h2>FetchXML Explorer · inspect and troubleshoot</h2><p>Paste an existing query or choose an example. Explore joins, filters, diagrams and field lineage right in your browser.</p></div></div>
 <div class="editor-shell"><div class="panel editor"><div class="panel-head"><div><h3>01 · FetchXML editor</h3><small>Read-only analysis. Never sends your query to Dataverse.</small></div><span class="eyebrow" class="live-pill">LIVE PREVIEW</span></div><div class="textarea-wrap"><label for="examples">Load a worked example</label><select id="examples" class="sample-select" aria-label="FetchXML examples"><option value="">Choose a query example…</option></select><div id="example-name" class="sample-note"></div><label for="fetchxml">FetchXML source <span id="raw-summary" class="mini-caption"></span></label><textarea id="fetchxml" class="code-editor" spellcheck="false" autocapitalize="off" autocomplete="off" aria-describedby="raw-summary" placeholder="<fetch>…</fetch>"></textarea><div class="toolbar"><button class="btn btn-primary" id="visualise" type="button">Visualise query →</button><button class="btn" id="format" type="button">Format XML</button><button class="btn btn-ghost" id="clear" type="button">Clear</button></div></div></div>
 <div class="panel side-explain"><h3>What you’ll discover</h3><ol><li><strong>Where the data starts</strong> — identify the base Dataverse table.</li><li><strong>How tables connect</strong> — understand <code>from</code>, <code>to</code>, aliases and join types.</li><li><strong>What gets included</strong> — trace nested AND / OR filters, sorting and aggregation.</li><li><strong>Where each field originates</strong> — follow output columns back to source entities.</li><li><strong>How to explain the query</strong> — use diagrams and editable Word / PowerPoint exports.</li></ol><div class="side-divider"></div><div class="privacy-note"><strong>Private by design</strong>Your FetchXML is parsed entirely in your browser. No accounts, API tokens or environment URLs are needed.</div><div class="side-divider"></div><h3>Understands key FetchXML constructs</h3><p>Entity / link-entity, nested joins, filters, conditions, output aliases, grouping, aggregates, sorting, top, count, page and distinct.</p></div></div>
 <div class="alert" id="errors" role="alert" hidden><strong>We couldn't visualise that query yet.</strong><p id="error-message"></p></div></section>
@@ -94,57 +177,7 @@
 <section id="privacy"><div class="section-head"><div><h2>Privacy, network activity and limitations</h2><p>Open source, independently inspectable and clear about what can and can't be inferred.</p></div></div><div class="details-grid"><div class="panel network-panel"><h3>Network transparency</h3><p>All FetchXML parsing, diagram creation, SVG / PNG / JSON / Mermaid exports and office document creation happen in your browser. The online site loads Mightora shared components, stylesheet and associated assets from GitHub / jsDelivr, plus js-yaml; it does not send your pasted FetchXML to those services. No application analytics are included.</p><p id="network-count">Resource list not yet available</p><ul id="network-domains"></ul><button class="btn" id="network-refresh" type="button">Refresh resource summary</button><p><strong>Verify independently:</strong> press F12 → Developer Tools → Network → enable <em>Preserve log</em> → reload and inspect requests. Browser resource timing may omit some requests and is not a security audit.</p></div><div class="panel network-panel"><h3>What this tool does not do</h3><p>It does not run your query, connect to Microsoft Dataverse, access real records, validate security roles or confirm underlying relationship metadata. Join semantics and filter application are explained conceptually; query optimisation, actual row counts, dynamic lookups and cost are not measured.</p><p>Filters involving <code>entityname</code> can apply after a join. Special semi-join link types may behave differently from ordinary joins. Check the Microsoft documentation for production-critical decisions.</p><p><a href="https://learn.microsoft.com/en-us/power-apps/developer/data-platform/fetchxml/overview" target="_blank" rel="noopener noreferrer">Official Microsoft FetchXML guidance ↗</a></p></div></div>
 <div class="section-head"><div><h2>Frequently asked questions</h2></div></div><div class="faq-grid"><details class="panel"><summary>What is FetchXML in Power Platform?</summary><p>FetchXML is an XML-based query language used in Dataverse and model-driven Power Apps. It describes which table to read, which columns to return, filters, relationships, ordering, and optional aggregation.</p></details><details class="panel"><summary>Can I add FetchFlow as a full page within a model-driven app?</summary><p>Yes. Use the <a href="#model-driven">on-page installation guide</a> to download the HTML web resource, upload it to an unmanaged solution, then add a Web resource page in the model-driven app designer. It appears within the app navigation with a compact Mightora header and the full query-building workspace. Optional form and command-bar launchers are also included. Within a signed-in model-driven app, the Builder reads metadata, executes read-only FetchXML and visualises the query on demand. The separate public Explorer does not connect to Dataverse.</p></details><details class="panel"><summary>Does this run queries against my environment?</summary><p>No. It builds diagrams from the XML structure only. You do not provide an environment URL or credentials.</p></details><details class="panel"><summary>Can I edit the exported PowerPoint diagrams?</summary><p>Yes. PowerPoint diagrams are made from regular text boxes, connectors and shapes, not embedded screenshots.</p></details><details class="panel"><summary>Is the Word export editable too?</summary><p>Yes. Word contains editable text and native tables for the data-source, query-flow and field-lineage diagrams. The layout is table-based rather than PowerPoint-style free-floating shapes.</p></details><details class="panel"><summary>How are <code>from</code> and <code>to</code> interpreted?</summary><p>In a link-entity, <code>from</code> is the related table column and <code>to</code> is the matching parent table column. The visualisation labels this relationship explicitly.</p></details><details class="panel"><summary>Does it work without the internet?</summary><p>Yes. Download the dedicated offline HTML or ZIP; the offline release embeds its JavaScript, styling and branding. Developer tools can verify that it makes no application network requests.</p></details></div></section>
 
-<!--ONLINE_INSTALL_START-->
-<section id="model-driven" class="install-section" aria-labelledby="install-heading">
-  <div class="section-head">
-    <div>
-      <div class="eyebrow">MIGHTORA · DATAVERSE WEB RESOURCE</div>
-      <h2 id="install-heading">Use FetchFlow inside a model-driven app</h2>
-      <p>Add a focused, drag-and-drop FetchXML Builder to your model-driven app. Discover tables and fields, add linked entities and filters, execute queries, inspect generated XML, or open query diagrams on demand.</p>
-    </div>
-  </div>
-  <div class="install-layout">
-    <article class="panel install-download" aria-labelledby="install-download-heading">
-      <span class="install-kicker">SELF-CONTAINED HTML WEB RESOURCE</span>
-      <h3 id="install-download-heading">Download FetchFlow for Dataverse</h3>
-      <p>One HTML file contains a focused live Dataverse Builder, with drag-and-drop fields, linked entities, filtering, read-only execution, generated XML and optional visualisation. Upload it into a Dataverse solution as a <strong>Webpage (HTML)</strong> web resource.</p>
-      <div class="install-filename"><span>Web resource file</span><code>mightora_fetchflow_builder.html</code></div>
-      <div class="install-download-actions">
-        <a class="btn btn-primary" href="dataverse/mightora_fetchflow_builder.html" download="mightora_fetchflow_builder.html">Download HTML web resource <span aria-hidden="true">↓</span></a>
-        <a class="btn" href="downloads/Mightora-FetchFlow-Dataverse.zip" download>Download installation ZIP <span aria-hidden="true">↓</span></a>
-      </div>
-      <p class="install-support">The ZIP also includes the optional form launcher, command-bar JavaScript, installation guide and MIT licence. It is <strong>not</strong> an importable Dataverse solution ZIP.</p>
-      <div class="install-capabilities" aria-label="Web resource properties">
-        <span>✓ No CDN dependencies</span>
-        <span>✓ No external hosting</span>
-        <span>✓ Live read-only Dataverse query tests</span><span>✓ On-demand query diagrams</span>
-      </div>
-    </article>
-    <article class="panel install-walkthrough" aria-labelledby="install-steps-heading">
-      <h3 id="install-steps-heading">Install as a full app page</h3>
-      <ol class="install-steps">
-        <li><strong>Download the HTML</strong><span>Use the file on the left, or extract it from the Dataverse ZIP.</span></li>
-        <li><strong>Create a web resource</strong><span>Go to <a href="https://make.powerapps.com/" target="_blank" rel="noopener noreferrer">Power Apps</a> → <strong>Solutions</strong> → your unmanaged solution → <strong>New → More → Web resource</strong>. Choose <strong>Webpage (HTML)</strong>, upload the file and save.</span></li>
-        <li><strong>Publish the web resource</strong><span>Check its full name after saving and select <strong>Publish</strong>. Your publisher's customization prefix is added automatically.</span></li>
-        <li><strong>Add it to your model-driven app</strong><span>Open the app designer → <strong>Pages → New → Web resource</strong>, and select the FetchFlow web resource.</span></li>
-        <li><strong>Show it in navigation</strong><span>Keep <strong>Show in navigation</strong> selected and give the page a title such as <strong>FetchXML Builder</strong>.</span></li>
-        <li><strong>Save, publish and test</strong><span>Open the model-driven app, select <strong>FetchXML Builder</strong>, discover tables and run a read-only query as the signed-in user. Use Explorer below to troubleshoot.</span></li>
-      </ol>
-    </article>
-  </div>
-  <div class="install-notice" role="note">
-    <strong>Live Dataverse access:</strong> The installed Builder reads table, column and relationship metadata and runs read-only FetchXML using the signed-in user's permissions. Results may contain sensitive records; preview is capped at 50 rows. The separate Explorer works offline without a Dataverse connection. Nothing is automatically saved or sent to Mightora.
-  </div>
-  <details class="panel install-alternative">
-    <summary>Prefer to launch FetchFlow from a form button or command bar?</summary>
-    <div class="install-alternative-content">
-      <p>The same HTML builder also works in a model-driven app dialog. The downloadable ZIP contains <code>mightora_fetchflow_launcher.html</code> for a form button and <code>mightora_fetchflow_command.js</code> for an optional command-bar action using <code>MightoraFetchFlow.openBuilder</code>.</p>
-      <p>If the solution publisher gives your web resource a different name, update the builder resource name in either optional launcher before using it. Neither launcher is necessary for full-page navigation.</p>
-    </div>
-  </details>
-  <p class="install-references">Detailed instructions: <a href="https://github.com/mightora/fetchflow.mightora.io/blob/main/dataverse/README.md" target="_blank" rel="noopener noreferrer">FetchFlow Dataverse installation guide ↗</a> · <a href="https://learn.microsoft.com/en-us/power-apps/maker/model-driven-apps/create-remove-pages" target="_blank" rel="noopener noreferrer">Microsoft documentation: model-driven app pages ↗</a></p>
-</section>
-<!--ONLINE_INSTALL_END-->
+
 
 </div></main>
 <mightora-author><div class="author-section-overlay"><div class="author-section-inner"><div class="author-photos"><img src="https://techtweedie.github.io/images/author/ian-tweedie-sq2_hu_a380911c6f4726de.png" alt="Ian Tweedie" class="author-avatar" /><img src="https://raw.githubusercontent.com/TechTweedie/techtweedie.github.io/v2/assets/images/site/main-logo.png" alt="TechTweedie" class="author-blog-logo" /></div><div class="author-text"><h2 class="author-heading">Built by TechTweedie</h2><p class="author-bio">FetchFlow is a free Mightora tool created by <strong>Ian Tweedie</strong> (TechTweedie), a technology consultant and developer based in North East England. Ian builds practical open-source tools to make developer work easier to understand, share and maintain.</p><div class="author-links"><a href="https://techtweedie.github.io" target="_blank" rel="noopener" class="author-link">TechTweedie blog</a><a href="https://github.com/itweedie" target="_blank" rel="noopener" class="author-link">GitHub</a></div></div></div></div></mightora-author>

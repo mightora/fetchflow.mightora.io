@@ -159,3 +159,52 @@ test('fallback footer navigation is readable on mobile widths',async({page})=>{
 
 
 
+
+
+test('public homepage leads with downloadable Dataverse Builder and separates the browser Explorer',async({page})=>{
+ const online=fs.readFileSync(path.resolve(__dirname,'../dist/index.html'),'utf8');
+ await page.route('**/*',route=>route.abort());
+ await page.setContent(online);
+ const hero=page.locator('.hero-builder');
+ await expect(hero.getByRole('heading',{level:1})).toContainText('FetchXML Builder');
+ await expect(hero.getByRole('heading',{level:1})).toContainText('model-driven app');
+ await expect(hero.locator('a[download="mightora_fetchflow_builder.html"]')).toHaveAttribute('href','dataverse/mightora_fetchflow_builder.html');
+ await expect(hero.locator('a[href="#model-driven"]')).toBeVisible();
+ await expect(page.locator('.quick-jump-nav a')).toHaveCount(4);
+ await expect(page.locator('.quick-jump-nav a').first()).toHaveAttribute('href','#model-driven');
+ await expect(page.locator('main > .container > section').first()).toHaveAttribute('id','model-driven');
+ const install=page.locator('#model-driven');
+ await expect(install.locator('.install-overview li')).toHaveCount(3);
+ await expect(install.locator('.install-steps li')).toHaveCount(6);
+ await expect(install.locator('.install-detail-guide')).not.toHaveAttribute('open','');
+ await install.locator('.install-detail-guide summary').click();
+ await expect(install.locator('.install-steps li').first()).toBeVisible();
+ await expect(page.locator('#browser-tools')).toContainText(/browser-based explorer/i);
+ await expect(page.locator('#builder .eyebrow')).toContainText('NO DATAVERSE CONNECTION');
+});
+test('offline homepage describes Explorer and removes Builder installation paths',async({page})=>{
+ await page.setContent(offline());
+ await expect(page.locator('.hero h1')).toContainText('Explore FetchXML');
+ await expect(page.locator('.hero')).toContainText('without a Dataverse connection');
+ await expect(page.locator('.hero-builder')).toHaveCount(0);
+ await expect(page.locator('#model-driven')).toHaveCount(0);
+ await expect(page.locator('#browser-tools')).toHaveCount(0);
+ await expect(page.locator('a[href="#model-driven"]')).toHaveCount(0);
+ await expect(page.locator('.quick-jump-nav a')).toHaveCount(4);
+ await expect(page.locator('#builder-heading')).toContainText('Build FetchXML');
+});
+test('builder-first homepage remains readable at mobile width',async({page})=>{
+ await page.setViewportSize({width:390,height:844});
+ const online=fs.readFileSync(path.resolve(__dirname,'../dist/index.html'),'utf8');
+ await page.route('**/*',route=>route.abort());
+ await page.setContent(online);
+ const primary=page.locator('.hero .hero-primary');
+ await expect(primary).toBeVisible();
+ const rect=await primary.boundingBox();
+ expect(rect).not.toBeNull();
+ expect(rect.width).toBeLessThanOrEqual(390);
+ await page.locator('#model-driven').scrollIntoViewIfNeeded();
+ await expect(page.locator('.install-overview li')).toHaveCount(3);
+ const width=await page.locator('#model-driven').evaluate(el=>el.getBoundingClientRect().width);
+ expect(width).toBeLessThanOrEqual(390);
+});
