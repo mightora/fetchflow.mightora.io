@@ -57,7 +57,7 @@ test('Dataverse full-page resource is local, compact and preserves the visual bu
  const dataverse=fs.readFileSync(path.resolve(__dirname,'../dist/dataverse/mightora_fetchflow_builder.html'),'utf8');
  await page.setContent(dataverse);
  await expect(page.locator('body')).toHaveClass(/dataverse-page/);
- await expect(page.locator('.dv-page-logo')).toHaveAttribute('src',/^data:image\\//);
+ await expect(page.locator('.dv-page-logo')).toHaveAttribute('src',new RegExp('^data:image/'));
  await expect(page.locator('.dv-page-heading h1')).toContainText('FetchFlow');
  await expect(page.locator('mightora-header, mightora-footer, mightora-author')).toHaveCount(0);
  await expect(page.locator('.hero')).toHaveCount(0);
