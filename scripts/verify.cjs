@@ -22,6 +22,29 @@ const JSZip=require('../vendor/jszip.min.js');
  assert.equal(csp[1],digest,'CSP must match bundled inline JavaScript');
  const zip=new JSZip();await zip.loadAsync(fs.readFileSync(path.join(dist,'downloads/Mightora-FetchFlow-Offline.zip')));
  assert.equal(await zip.file('index.html').async('string'),offline,'Offline ZIP must exactly match HTML release');
+ const data=fs.readFileSync(path.join(dist,'dataverse/mightora_fetchflow_builder.html'),'utf8');
+ const launcher=fs.readFileSync(path.join(dist,'dataverse/mightora_fetchflow_launcher.html'),'utf8');
+ const command=fs.readFileSync(path.join(dist,'dataverse/mightora_fetchflow_command.js'),'utf8');
+ assert(data.includes('window.__DATAVERSE__=true;'));
+ assert(data.includes("connect-src 'none'"));
+ assert(data.includes('builder-preview')&&data.includes('FetchXMLBuilder'));
+ assert(!/<script[^>]+src=/i.test(data),'Dataverse edition must be self-contained');
+ assert(!/<img[^>]+src="https?:/i.test(data),'Dataverse edition must not load images from external hosts');
+ assert(launcher.includes('navigateTo')&&launcher.includes('mightora_fetchflow_builder.html'));
+ assert(command.includes('MightoraFetchFlow')&&command.includes('navigateTo'));
+ for(const resource of [data,launcher]){
+  const inline=resource.match(/<script>([\s\S]*?)<\/script>/);
+  const hashValue=resource.match(/script-src 'sha256-([^']+)'/);
+  assert(inline && hashValue,'Dataverse web resources must hash their inline script');
+  assert.equal(crypto.createHash('sha256').update(inline[1]).digest('base64'),hashValue[1],'Web resource CSP script hash must match');
+ }
+ const solutionZip=new JSZip();
+ await solutionZip.loadAsync(fs.readFileSync(path.join(dist,'downloads/Mightora-FetchFlow-Dataverse.zip')));
+ for(const [name,value] of [['mightora_fetchflow_builder.html',data],['mightora_fetchflow_launcher.html',launcher],['mightora_fetchflow_command.js',command]]) {
+   assert.equal(await solutionZip.file(name).async('string'),value,'Dataverse ZIP must contain matching release: '+name);
+ }
+ for(const p of ['README.md','LICENSE'])assert(solutionZip.file(p));
+ assert(online.includes('Mightora-FetchFlow-Dataverse.zip'),'Dataverse download link must be present');
  for(const p of ['README.txt','LICENSE']) assert(zip.file(p));
  console.log('✓ Both editions, branding components, CSP hashes and ZIP/HTML parity verified');
 })();
