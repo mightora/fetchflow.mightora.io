@@ -33,6 +33,10 @@ function assemble(offline,dataverse=false){
   html=html.replace(/<a href="#model-driven">07 · Power Apps setup<\/a>/,'');
   html=html.replace('08 · Privacy & help','07 · Privacy & help');
   html=html.replace(/<p class="hero-install-cta">[\s\S]*?<\/p>/,'');
+  // Remove the exports-area teaser and replace the online-only FAQ anchor.
+  html=html.replace(/<div class="download-card online-only"><div><strong>Install in your model-driven Power App<\/strong>[\s\S]*?<a class="btn" href="#model-driven">View installation instructions →<\/a><\/div>/,'');
+  html=html.replace('Use the <a href="#model-driven">on-page installation guide</a>',
+                    'On the online FetchFlow website, use the installation guide');
   html=html.replace('<!--FOOTER_PATCH-->','');
   // Offline edition must never fetch live CI badges: status is only verifiable online.
   html=html.replace(/<img\s+class="live-badge"[^>]*>/gi,'');
