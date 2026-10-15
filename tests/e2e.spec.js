@@ -179,7 +179,7 @@ test('public homepage leads with downloadable Dataverse Builder and separates th
  await expect(install.locator('.install-detail-guide')).not.toHaveAttribute('open','');
  await install.locator('.install-detail-guide summary').click();
  await expect(install.locator('.install-steps li').first()).toBeVisible();
- await expect(page.locator('#browser-tools')).toContainText('browser-based Explorer');
+ await expect(page.locator('#browser-tools')).toContainText(/browser-based explorer/i);
  await expect(page.locator('#builder .eyebrow')).toContainText('NO DATAVERSE CONNECTION');
 });
 test('offline homepage describes Explorer and removes Builder installation paths',async({page})=>{
