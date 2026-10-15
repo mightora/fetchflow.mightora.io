@@ -124,10 +124,20 @@ function assemble(offline,dataverse=false){
  }
  return html;
 }
+function assembleDataverse(){
+ const css=read('src/dataverse-builder.css');
+ const scripts=[read('src/model.js'),read('src/diagrams.js'),read('src/dataverse-builder-model.js'),read('src/dataverse-builder.js')].join('\n');
+ const script=scripts.replace(/<\/script/gi,'<\\/script');
+ let html=read('dataverse/query-designer.template.html');
+ const csp=`default-src 'none'; script-src ${hash(script)}; style-src ${hash(css)}; img-src data:; font-src data:; connect-src 'self'; object-src 'none'; frame-src 'none'; form-action 'none'; base-uri 'none'`;
+ html=html.replace('<!--BUILD_CSP-->',`<meta http-equiv="Content-Security-Policy" content="${csp}">`);
+ html=html.replace('/*BUILD_CSS*/',css).replace('/*BUILD_APP*/',()=>script).replace('<!--BRAND_LOGO-->',logo);
+ return html;
+}
 (async()=>{
  if(process.env.REQUIRE_BRAND_ASSETS==='1' && !has('assets/mightora-logo.png')) throw new Error('Official Mightora logo is required for a production build.');
  const dist=path.join(root,'dist');fs.rmSync(dist,{recursive:true,force:true});fs.mkdirSync(path.join(dist,'offline'),{recursive:true});fs.mkdirSync(path.join(dist,'downloads'),{recursive:true});fs.mkdirSync(path.join(dist,'dataverse'),{recursive:true});
- const online=assemble(false),offline=assemble(true),dataverse=assemble(true,true);
+ const online=assemble(false),offline=assemble(true),dataverse=assembleDataverse();
  fs.writeFileSync(path.join(dist,'index.html'),online);fs.writeFileSync(path.join(dist,'offline/index.html'),offline);
  fs.writeFileSync(path.join(dist,'dataverse/mightora_fetchflow_builder.html'),dataverse);
  // Form launcher is a small, locally executable HTML web resource. Hash its

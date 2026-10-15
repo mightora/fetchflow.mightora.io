@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>FetchFlow | Live FetchXML Builder | Mightora</title>
+<!--BUILD_CSP-->
+<style>/*BUILD_CSS*/</style>
+</head>
+<body>
+<div class="app">
+<header class="app-head">
+  <div class="brand"><img src="<!--BRAND_LOGO-->" alt="Mightora" width="126" height="30"><div class="brand-divider"></div><div><strong>FetchFlow Builder</strong><span>Dataverse query designer</span></div></div>
+  <div class="app-actions">
+    <span id="connection" class="connection" role="status" aria-live="polite">Checking Dataverse…</span>
+    <button id="btn-xml" type="button" class="button secondary">View FetchXML</button>
+    <button id="btn-visualise" type="button" class="button secondary">Visualise</button>
+    <button id="btn-run" type="button" class="button primary" disabled>Execute query <span aria-hidden="true">▶</span></button>
+  </div>
+</header>
+<div class="toolbar-strip"><div class="query-controls"><label for="query-top">Preview rows <input id="query-top" type="number" min="1" max="50" value="50" title="Maximum records returned" /></label><label class="check"><input id="query-distinct" type="checkbox"> Distinct</label><label for="query-sort">Sort <input id="query-sort" placeholder="Column logical name" autocomplete="off"></label><label for="query-order" class="visually-hidden">Sort direction</label><select id="query-order"><option value="asc">Ascending</option><option value="desc">Descending</option></select></div><div class="toolbar-note">Read-only execution · Current user's Dataverse permissions</div></div>
+<datalist id="all-tables"></datalist>
+<main>
+  <section id="builder-view" class="builder-view" aria-label="Visual query builder">
+    <aside class="palette panel">
+      <div class="panel-head"><div><span class="eyebrow">01 · DISCOVER</span><h2>Tables &amp; fields</h2></div><button type="button" class="icon-button" id="refresh-tables" title="Refresh tables" aria-label="Refresh tables">↻</button></div>
+      <label class="field-label" for="table-search">Search tables</label>
+      <input id="table-search" placeholder="Search by name…" type="search" autocomplete="off">
+      <label for="tables" class="visually-hidden">Available tables</label>
+      <select id="tables" size="6" aria-label="Dataverse tables"><option value="">Connecting to Dataverse…</option></select>
+      <button id="set-root" type="button" class="button secondary full" disabled>Use selected table as source</button>
+      <div class="palette-divider"></div>
+      <div class="palette-heading"><div><span class="eyebrow">FIELDS</span><h3 id="field-title">Select a table</h3></div><span id="field-count" class="counter"></span></div>
+      <label for="field-search" class="visually-hidden">Search fields</label><input id="field-search" type="search" placeholder="Find fields…" autocomplete="off">
+      <div id="field-list" class="field-list" role="list" aria-label="Drag fields onto a table card"></div>
+      <p class="help">Drag a field into a table's selected fields, or use <strong>+</strong> to add it. Click a table card to choose which table's fields are shown.</p>
+      <p id="metadata-status" class="status" role="status" aria-live="polite"></p>
+    </aside>
+    <section class="design-area" aria-label="Query design canvas">
+      <div class="design-heading"><div><span class="eyebrow">02 · DESIGN</span><h1>Build your FetchXML query</h1><p>Choose tables, drag in columns and add linked entities or filter conditions.</p></div><button class="button subtle" id="reset-query" type="button">Reset</button></div>
+      <div id="query-canvas" class="query-canvas"></div>
+      <div class="canvas-hint">Fields dropped onto a table card are added to its output. Linked entities can have their own columns and filters.</div>
+    </section>
+  </section>
+  <section id="xml-view" class="workspace panel" hidden aria-labelledby="xml-heading">
+    <div class="workspace-head"><div><span class="eyebrow">GENERATED XML</span><h2 id="xml-heading">FetchXML source</h2><p>Edit source directly if your query uses advanced FetchXML not supported by the visual designer.</p></div><div class="workspace-actions"><button id="copy-xml" class="button secondary" type="button">Copy</button><button id="download-xml" class="button secondary" type="button">Download</button><button id="edit-xml" class="button secondary" type="button">Edit XML</button><button id="back-design" class="button subtle" type="button">Back to builder</button></div></div>
+    <textarea id="xml-source" spellcheck="false" aria-label="FetchXML source" readonly></textarea>
+    <p id="xml-status" class="status" role="status" aria-live="polite">The XML updates automatically when you change the visual builder.</p>
+    <div class="xml-tools"><button id="import-xml" class="button secondary" type="button">Import into visual builder</button><span>Advanced XML is preserved if it cannot be represented visually.</span></div>
+  </section>
+  <section id="results-view" class="workspace panel" hidden aria-labelledby="results-heading">
+    <div class="workspace-head"><div><span class="eyebrow">LIVE DATAVERSE</span><h2 id="results-heading">Execution results</h2><p id="results-summary">Run FetchXML to see records returned from the current environment.</p></div><button id="results-back" class="button subtle" type="button">Back to builder</button></div>
+    <div id="results-status" role="status" aria-live="polite" class="status"></div>
+    <div class="results-scroll"><table id="results-table"><thead id="results-head"></thead><tbody id="results-body"></tbody></table></div>
+    <p class="help">Preview is limited to 50 records. Dataverse security roles and row-level permissions apply. No data is sent to Mightora.</p>
+  </section>
+  <section id="visual-view" class="workspace panel" hidden aria-labelledby="visual-heading">
+    <div class="workspace-head"><div><span class="eyebrow">QUERY EXPLORER</span><h2 id="visual-heading">Visualise your FetchXML</h2><p>Explore sources, joins, query stages and output lineage without executing a query.</p></div><button id="visual-back" class="button subtle" type="button">Back to builder</button></div>
+    <p id="visual-status" role="status" aria-live="polite" class="status"></p>
+    <div id="visual-diagrams" class="diagram-stack"><section><h3>Tables &amp; relationships</h3><div id="diagram-rel" class="diagram"></div></section><section><h3>Query flow</h3><div id="diagram-flow" class="diagram"></div></section><section><h3>Field lineage</h3><div id="diagram-fields" class="diagram"></div></section></div>
+  </section>
+</main>
+<footer class="app-footer"><span>FetchFlow by <a href="https://mightora.io" target="_blank" rel="noopener noreferrer">Mightora</a></span><span>Data stays within your Dataverse environment</span><span><a href="https://github.com/mightora/fetchflow.mightora.io" target="_blank" rel="noopener noreferrer">Open source</a> · <a href="https://github.com/mightora/fetchflow.mightora.io/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">MIT licence</a></span></footer>
+</div>
+<script>/*BUILD_APP*/</script>
+</body>
+</html>
