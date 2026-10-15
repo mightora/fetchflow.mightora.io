@@ -38,3 +38,6 @@
 .dataverse-page #builder .section-head .eyebrow{color:var(--fb-primary)}
 @media(max-width:1040px){.dv-live-grid{grid-template-columns:1fr}}
 @media(max-width:650px){.dv-live-intro,.dv-live-card{padding:14px}.dv-live-handoff{align-items:stretch;flex-direction:column;padding:14px}.dv-live-actions .btn{flex:1}.dv-live-card-title span{font-size:9px}}
+
+.dv-live-saved-views{border-top:1px solid var(--line);padding-top:12px;margin-top:19px}
+.dv-live-saved-views .dv-live-actions{margin:10px 0}
