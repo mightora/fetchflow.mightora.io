@@ -4,6 +4,7 @@ test('offline page renders diagrams, switches examples and has no external reque
  const requests=[];const errors=[];page.on('request',r=>requests.push(r.url()));page.on('pageerror',e=>errors.push(e.message));
  await page.setContent(offline());
  await expect(page.locator('#metric-tables')).toHaveText('2');
+ await expect(page.locator('mightora-footer.portable-footer')).toHaveCount(1);
  await expect(page.locator('.diagram-visual svg')).toHaveCount(3);
  await page.locator('#examples').selectOption('aggregate');
  await expect(page.locator('#metric-fields')).toHaveText('3');
@@ -59,7 +60,9 @@ test('Dataverse full-page resource is local, compact and preserves the visual bu
  await expect(page.locator('body')).toHaveClass(/dataverse-page/);
  await expect(page.locator('.dv-page-logo')).toHaveAttribute('src',new RegExp('^data:image/'));
  await expect(page.locator('.dv-page-heading h1')).toContainText('FetchFlow');
- await expect(page.locator('mightora-header, mightora-footer, mightora-author')).toHaveCount(0);
+ await expect(page.locator('mightora-header, mightora-author')).toHaveCount(0);
+ await expect(page.locator('mightora-footer.portable-footer.embedded-footer')).toHaveCount(1);
+ await expect(page.locator('mightora-footer .footer-bottom-links a')).toHaveCount(3);
  await expect(page.locator('.hero')).toHaveCount(0);
  await expect(page.locator('#builder')).toBeVisible();
  await expect(page.locator('#metric-tables')).toHaveText('1');
@@ -79,4 +82,23 @@ test('Dataverse full-page layout remains usable at tablet widths',async({page})=
  await expect(page.locator('#builder-table')).toBeVisible();
  await expect(page.locator('#builder-preview')).toBeVisible();
  await expect(page.locator('#builder-apply')).toBeEnabled();
+});
+
+test('public footer keeps shared components and fixes root-relative Mightora links',async({page})=>{
+ const online=fs.readFileSync(path.resolve(__dirname,'../dist/index.html'),'utf8');
+ await page.route('**/*',route=>route.abort());
+ await page.setContent(online);
+ await expect(page.locator('mightora-footer .footer-bottom-links a')).toHaveCount(2);
+ await page.evaluate(()=>{
+   const footer=document.querySelector('mightora-footer');
+   const main=document.createElement('div');
+   main.className='footer-main';
+   const link=document.createElement('a');
+   link.id='footer-route-check';
+   link.setAttribute('href','/about/');
+   link.textContent='About Mightora';
+   main.appendChild(link);
+   footer.insertBefore(main,footer.firstChild);
+ });
+ await expect(page.locator('#footer-route-check')).toHaveAttribute('href','https://mightora.io/about/');
 });

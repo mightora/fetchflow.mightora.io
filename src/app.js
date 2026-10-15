@@ -52,6 +52,20 @@
     if(root.__OFFLINE__){const li=document.createElement('li');li.textContent='Offline build: no network resources are required by the application.';list.append(li);} else if(!hosts.size){const li=document.createElement('li');li.textContent='No external resource timing entries visible to this page.';list.append(li);}else{hosts.forEach((count,host)=>{const li=document.createElement('li');li.textContent=`${host} · ${count} resource${count===1?'':'s'}`;list.append(li);});}
     plain('network-count',`${items.length} resource request${items.length===1?'':'s'} visible through the Performance API`);
   }
+  function normaliseSharedFooterLinks(){
+    if(root.__OFFLINE__)return;
+    const footer=document.querySelector('mightora-footer');
+    if(!footer || typeof MutationObserver==='undefined')return;
+    // The shared footer YAML contains root-relative Mightora site links.
+    // On a tools subdomain those must point to mightora.io, not this app.
+    const correct=()=>footer.querySelectorAll('.footer-main a[href^="/"]').forEach(a=>{
+      const relative=a.getAttribute('href');
+      if(relative && relative[0]==='/' && relative[1]!=='/')a.setAttribute('href','https://mightora.io'+relative);
+    });
+    const observer=new MutationObserver(correct);
+    observer.observe(footer,{childList:true,subtree:true});
+    correct();
+  }
   function init(){
     const sample=$('examples');examples.forEach(e=>{const option=document.createElement('option');option.value=e.id;option.textContent=e.name;sample.append(option);});
     sample.addEventListener('change',()=>selectExample(sample.value));
@@ -91,6 +105,7 @@
     }else{
       selectExample('account-contact');sample.value='account-contact';
     }
+    normaliseSharedFooterLinks();
     network();setTimeout(network,1500);
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();

@@ -18,3 +18,45 @@ main{padding:31px 0 12px}.section-head{display:flex;justify-content:space-betwee
 /* FetchFlow visual query composer — retains shared Mightora design tokens */
 #builder{scroll-margin-top:125px;margin-bottom:30px}.builder-panel{overflow:hidden}.builder-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)}.builder-controls,.builder-output{padding:24px;min-width:0}.builder-controls{border-right:1px solid var(--line,#dfe9ed)}.builder-controls h3,.builder-output h3{font-size:17px;margin:12px 0}.builder-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.builder-form-grid .wide{grid-column:1/-1}.builder-panel label{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:650;color:var(--ink,#173244)}.builder-panel input:not([type=checkbox]),.builder-panel select{width:100%;min-width:0;border:1px solid var(--line,#cbd7df);background:#fff;border-radius:7px;padding:10px;color:var(--ink,#173244);font:inherit}.builder-panel input:disabled{background:#f1f5f7;color:#617789}.builder-panel :where(button,input,select):focus-visible{outline:3px solid var(--fb-accent,#0ba5a5);outline-offset:2px}.builder-checks{display:flex;gap:18px;flex-wrap:wrap;margin:14px 0}.builder-checks label,.builder-panel .builder-switch{display:flex;flex-direction:row;align-items:center;gap:8px;justify-content:flex-start}.builder-panel input[type=checkbox]{width:17px;height:17px;accent-color:var(--fb-primary,#128b99)}.builder-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:18px 0 8px;flex-wrap:wrap}.builder-heading h3{margin:0}.builder-filter-list{display:grid;gap:8px;margin:10px 0 20px}.builder-filter-row{display:grid;grid-template-columns:1fr 0.8fr 1.5fr auto;gap:8px;align-items:center}.builder-filter-row button{white-space:nowrap}.builder-output{background:#f5f9fa}.builder-code{background:#122e40;color:#dafaf6;border-radius:10px;padding:17px;overflow:auto;max-height:470px;min-height:200px;font-size:12px;line-height:1.6;white-space:pre;tab-size:2}.builder-message{margin:10px 0;font-size:13px;color:#136a63;font-weight:700}.builder-message.builder-error{color:#a12a36}.builder-actions{margin-top:10px}.builder-help{font-size:12px;line-height:1.5;color:var(--subtle,#667e8b);margin:12px 0}.builder-panel [hidden]{display:none!important}.builder-panel .btn:disabled{opacity:.5;cursor:not-allowed}
 @media(max-width:980px){.builder-grid{grid-template-columns:1fr}.builder-controls{border-right:0;border-bottom:1px solid var(--line,#dfe9ed)}}@media(max-width:620px){.builder-form-grid{grid-template-columns:1fr}.builder-filter-row{grid-template-columns:1fr 1fr}.builder-filter-row input:nth-child(3){grid-column:1/-1}.builder-filter-row button{grid-column:1/-1}.builder-controls,.builder-output{padding:16px}.builder-actions{flex-wrap:wrap}}
+
+/* Align FetchFlow's site author/footer with mightora/shared-ui. Local tokens
+   provide clear fallback contrast when the shared stylesheet cannot load. */
+mightora-author .author-section-overlay{padding:5rem 1.5rem}
+mightora-author .author-section-inner{max-width:780px;width:100%;gap:2rem}
+mightora-author .author-photos{flex-direction:column;gap:1rem}
+mightora-author .author-avatar{width:120px;height:120px}
+mightora-author .author-blog-logo{width:110px;height:auto}
+mightora-author .author-bio{color:rgba(255,255,255,.9)}
+mightora-footer .footer-bottom{padding:1.25rem 0}
+mightora-footer .footer-copy{color:rgba(255,255,255,.77)}
+mightora-footer .footer-copy a{color:#e7f9f5}
+mightora-footer .footer-bottom-links{display:flex;gap:1rem;align-items:center;flex-wrap:wrap}
+mightora-footer .footer-bottom-links a{color:#e7f9f5}
+mightora-footer .site-footer__note{color:rgba(255,255,255,.77);font-size:.8rem}
+mightora-footer :where(a,button):focus-visible{outline:3px solid var(--fb-accent);outline-offset:3px}
+@media(max-width:600px){mightora-author .author-section-inner{flex-direction:column;text-align:center}mightora-author .author-links{justify-content:center}mightora-footer .footer-bottom{align-items:flex-start;gap:1rem}}
+/* Offline and Dataverse editions cannot fetch shared-ui. Reproduce its footer
+   surface with already-embedded Mightora assets and a compact link bar. */
+mightora-footer.portable-footer{display:block;background:#111827;color:rgba(255,255,255,.82);padding:1.25rem 0 0}
+.portable-footer .portable-footer-brand{display:flex;align-items:center;gap:1rem;padding:0 0 1.25rem}
+.portable-footer .portable-footer-logo{width:150px;max-height:42px;height:auto;object-fit:contain;flex-shrink:0}
+.portable-footer .portable-footer-description{margin:0;font-size:.875rem;color:rgba(255,255,255,.83)}
+.portable-footer .footer-bottom{border-top:1px solid rgba(255,255,255,.2);display:flex;gap:1rem;flex-wrap:wrap;justify-content:space-between;align-items:center}
+.portable-footer .footer-bottom-links a,.portable-footer .footer-copy a{color:#e7f9f5}
+@media(max-width:640px){.portable-footer .portable-footer-brand{flex-direction:column;align-items:flex-start}}
+
+/* Local fallback if shared-ui CSS is unavailable; normal shared-ui rules still
+   own the column layout and brand cards when loaded. */
+mightora-author{background-color:#102e40}
+mightora-footer:not(.portable-footer){display:block;background:#111827;color:#fff;padding:3rem 0 0}
+mightora-footer:not(.portable-footer) .footer-main{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2rem;margin-bottom:2.5rem}
+mightora-footer:not(.portable-footer) .footer-col-sections{display:flex;flex-direction:column;gap:1.5rem}
+mightora-footer:not(.portable-footer) .footer-section-title{font-weight:700;color:rgba(255,255,255,.8);font-size:.8rem;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem}
+mightora-footer:not(.portable-footer) .footer-links{list-style:none;display:flex;flex-direction:column;gap:.45rem;padding:0;margin:0}
+mightora-footer:not(.portable-footer) .footer-links a{color:rgba(255,255,255,.86);font-size:.875rem;text-decoration:none}
+mightora-footer:not(.portable-footer) .footer-links a:hover{color:#fff;text-decoration:underline}
+mightora-footer:not(.portable-footer) .footer-brands{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;border-top:1px solid rgba(255,255,255,.2);padding:1.5rem 0}
+mightora-footer:not(.portable-footer) .footer-brand{display:flex;gap:.75rem;align-items:center;color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.15);padding:.6rem 1rem;border-radius:8px}
+mightora-footer:not(.portable-footer) .footer-brand img{max-height:28px;width:auto;max-width:120px;object-fit:contain}
+mightora-footer:not(.portable-footer) .footer-brand-desc{font-size:.75rem;color:rgba(255,255,255,.85)}
+@media(max-width:768px){mightora-footer:not(.portable-footer) .footer-main{grid-template-columns:1fr;gap:1.5rem}}

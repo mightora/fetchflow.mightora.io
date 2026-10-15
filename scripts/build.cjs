@@ -35,7 +35,25 @@ function assemble(offline,dataverse=false){
   const appHeader=dataverse?read('dataverse/page-header.template.html').replace('<!--BRAND_LOGO-->',logo):offlineHeader;
   html=html.replace('<!--OFFLINE_HEADER-->',appHeader);
   html=html.replace(/<!--ONLINE_FOOTER_START-->[\s\S]*?<!--ONLINE_FOOTER_END-->/,'');
-  html=html.replace('<!--OFFLINE_FOOTER-->',dataverse?'':`<footer class="fallback-footer"><div class="container"><strong>FetchFlow by Mightora</strong><p>Offline Edition – No Internet Connection Required · MIT licensed · locally processed.</p></div></footer>`);
+  // Portable editions use a small self-contained <mightora-footer> without
+  // loading shared-ui, js-yaml, telemetry, fonts or remote images.
+  const portableFooter=`<mightora-footer class="portable-footer${dataverse?' embedded-footer':''}" role="contentinfo" aria-label="Mightora FetchFlow footer">
+    <div class="container">
+      <div class="portable-footer-brand">
+        <img class="portable-footer-logo" src="${logo}" alt="Mightora" width="150" height="38">
+        <p class="portable-footer-description">${dataverse?'FetchFlow for model-driven apps · Queries are built locally.':'Offline Edition – No Internet Connection Required · All query analysis stays on this device.'}</p>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-copy">© ${new Date().getFullYear()} FetchFlow by <a href="https://mightora.io" target="_blank" rel="noopener noreferrer">Mightora</a>.</div>
+        <div class="footer-bottom-links">
+          <a href="https://github.com/mightora/fetchflow.mightora.io" target="_blank" rel="noopener noreferrer">Source code</a>
+          <a href="https://github.com/mightora/fetchflow.mightora.io/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">MIT licence</a>
+          <a href="https://mightora.io/privacy-policy/" target="_blank" rel="noopener noreferrer">Privacy</a>
+        </div>
+      </div>
+    </div>
+  </mightora-footer>`;
+  html=html.replace('<!--OFFLINE_FOOTER-->',portableFooter);
   html=html.replace('src="https://techtweedie.github.io/images/author/ian-tweedie-sq2_hu_a380911c6f4726de.png"',`src="${avatar}"`);
   html=html.replace('src="https://raw.githubusercontent.com/TechTweedie/techtweedie.github.io/v2/assets/images/site/main-logo.png"',`src="${tt}"`);
   html=html.replace('<body>',dataverse?'<body class="offline-mode dataverse-page">':'<body class="offline-mode">');
