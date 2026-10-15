@@ -26,7 +26,7 @@ The Dataverse HTML web resource contains both workspaces, with the connected Bui
 - **Visual composition:** shares the supported FetchXML composer with the public app: root table, selected columns, basic AND/OR filters, one linked entity, sorting, distinct and top. Imported advanced XML continues to be editable in the full XML editor.
 - **Live query execution:** executes either the visual builder's generated FetchXML or the raw XML editor's query with `Xrm.WebApi.online.retrieveMultipleRecords`, using **raw, unencoded FetchXML**. Live results display in a scrollable table. The execution copy is bounded to the first 50 records; if a `top` attribute exists it is capped at 50 for the preview.
 - **Results and errors:** displays query result values as **text**, not HTML, including formatted labels when available. An error from the platform is shown in the tool for troubleshooting. Results are kept in the current browser page and can be cleared.
-- **Visual Explorer:** all existing diagrams, explanations and editable exports remain available alongside the Builder.
+- **Read saved queries:** choose **Find saved views** to load the FetchXML of accessible system or personal Dataverse views into the editor (up to 100 of each kind). This is a read-only operation; views are not changed.\n- **Visual Explorer:** all existing diagrams, explanations and editable exports remain available alongside the Builder.
 
 ## Security and privacy
 
