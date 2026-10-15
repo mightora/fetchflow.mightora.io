@@ -41,7 +41,7 @@ test('visual composer generates valid FetchXML without losing existing diagram f
  await page.locator('#builder-apply').click();
  await expect(page.locator('#metric-tables')).toHaveText('2');
  await expect(page.locator('#metric-fields')).toHaveText('3');
- await expect(page.locator('#fetchxml')).toContainText('statecode');
+ await expect(page.locator('#fetchxml')).toHaveValue(/statecode/);
  await page.locator('#builder-import').click();
  await expect(page.locator('#builder-preview')).toContainText('statecode');
  await page.locator('#builder-table').fill('bad table');
