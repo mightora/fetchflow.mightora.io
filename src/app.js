@@ -58,10 +58,19 @@
     if(!footer || typeof MutationObserver==='undefined')return;
     // The shared footer YAML contains root-relative Mightora site links.
     // On a tools subdomain those must point to mightora.io, not this app.
-    const correct=()=>footer.querySelectorAll('.footer-main a[href^="/"]').forEach(a=>{
-      const relative=a.getAttribute('href');
-      if(relative && relative[0]==='/' && relative[1]!=='/')a.setAttribute('href','https://mightora.io'+relative);
-    });
+    const correct=()=>{
+      footer.querySelectorAll('.footer-main a[href^="/"]').forEach(a=>{
+        const relative=a.getAttribute('href');
+        if(relative && relative[0]==='/' && relative[1]!=='/')a.setAttribute('href','https://mightora.io'+relative);
+      });
+      const fallback=footer.querySelector('.footer-fallback');
+      if(fallback){
+        // Shared UI renders its own .container > .footer-main once the YAML
+        // has been fetched and parsed. Only hide fallback for real links.
+        const liveLinks=footer.querySelector(':scope > .container > .footer-main .footer-links a');
+        fallback.hidden=!!liveLinks;
+      }
+    };
     const observer=new MutationObserver(correct);
     observer.observe(footer,{childList:true,subtree:true});
     correct();
