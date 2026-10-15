@@ -35,7 +35,7 @@ const JSZip=require('../vendor/jszip.min.js');
  assert(!data.includes('<section class="badges"'),'External GitHub badges must not be loaded in the app page');
  assert(!data.includes('<mightora-footer>'),'The external shared footer must not repeat inside the app');
  assert(!data.includes('<div id="offline-status"'),'App page should not claim to be the offline download edition');
- const cssBlock=data.match(/<style>([\\s\\S]*?)<\\/style>/);
+ const cssBlock=data.match(/<style>([\s\S]*?)<\/style>/);
  const cssHash=data.match(/style-src 'sha256-([^']+)'/);
  assert(cssBlock && cssHash && data.includes('dataverse-page'));
  assert.equal(crypto.createHash('sha256').update(cssBlock[1]).digest('base64'),cssHash[1],'App page CSP style hash must match its embedded CSS');
