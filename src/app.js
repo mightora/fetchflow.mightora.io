@@ -49,7 +49,7 @@
     const items=performance.getEntriesByType('resource').map(r=>{let url;try{url=new URL(r.name)}catch{return null}return {host:url.host,kind:r.initiatorType};}).filter(Boolean);
     const hosts=new Map();items.forEach(i=>hosts.set(i.host,(hosts.get(i.host)||0)+1));
     const list=$('network-domains');list.replaceChildren();
-    if(root.__OFFLINE__){const li=document.createElement('li');li.textContent='Offline build: no network resources are required by the application.';list.append(li);} else if(!hosts.size){const li=document.createElement('li');li.textContent='No external resource timing entries visible to this page.';list.append(li);}else{hosts.forEach((count,host)=>{const li=document.createElement('li');li.textContent=`${host} · ${count} resource${count===1?'':'s'}`;list.append(li);});}
+    if(root.__DATAVERSE_PAGE__){const li=document.createElement('li');li.textContent='Dataverse edition: live metadata and query execution use authenticated requests to this environment only; inspect F12 Network for details.';list.append(li);}else if(root.__OFFLINE__){const li=document.createElement('li');li.textContent='Offline build: no network resources are required by the application.';list.append(li);} else if(!hosts.size){const li=document.createElement('li');li.textContent='No external resource timing entries visible to this page.';list.append(li);}else{hosts.forEach((count,host)=>{const li=document.createElement('li');li.textContent=`${host} · ${count} resource${count===1?'':'s'}`;list.append(li);});}
     plain('network-count',`${items.length} resource request${items.length===1?'':'s'} visible through the Performance API`);
   }
   function normaliseSharedFooterLinks(){

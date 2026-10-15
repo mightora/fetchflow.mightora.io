@@ -55,6 +55,18 @@ const JSZip=require('../vendor/jszip.min.js');
  const command=fs.readFileSync(path.join(dist,'dataverse/mightora_fetchflow_command.js'),'utf8');
  assert(data.includes('window.__DATAVERSE__=true;'));
  assert(data.includes('window.__DATAVERSE_PAGE__=true;'),'Dataverse edition must enable full-page mode');
+ assert(data.includes('id="dataverse-live"'),'Dataverse edition must have a connected Builder workspace');
+ assert(data.includes('id="dv-table-picker"')&&data.includes('id="dv-columns"'),'Live metadata picker must ship in the web resource');
+ assert(data.includes('id="dv-run-query"')&&data.includes('id="dv-query-results"'),'Read-only live execution UI must ship in the web resource');
+ assert(data.includes('EntityDefinitions?'),'Dataverse edition must support querying table metadata');
+ assert(data.includes('retrieveMultipleRecords'),'Dataverse edition must execute FetchXML using signed-in Xrm.WebApi');
+ assert(data.includes("connect-src 'self'"),'Dataverse edition permits only same-origin metadata calls');
+ assert(!data.includes("connect-src 'none'"),'Dataverse edition must not block its own live metadata calls');
+ assert(!online.includes('id="dataverse-live"'),'Public Explorer must not contain live Dataverse access');
+ assert(!online.includes('FetchFlowDataverseLive'),'Public Explorer must not bundle live Dataverse code');
+ assert(!offline.includes('id="dataverse-live"'),'Offline Explorer must not contain live Dataverse access');
+ assert(!offline.includes('FetchFlowDataverseLive'),'Offline Explorer must not bundle live Dataverse code');
+
  assert(!data.includes('id="model-driven"'),'App web resource must not contain public installation instructions');
  assert(!data.includes('href="#model-driven"'),'App page navigation must not link to website installer');
 
@@ -73,7 +85,7 @@ const JSZip=require('../vendor/jszip.min.js');
  const cssHash=data.match(/style-src 'sha256-([^']+)'/);
  assert(cssBlock && cssHash && data.includes('dataverse-page'));
  assert.equal(crypto.createHash('sha256').update(cssBlock[1]).digest('base64'),cssHash[1],'App page CSP style hash must match its embedded CSS');
- assert(data.includes("connect-src 'none'"));
+ assert(data.includes("connect-src 'self'"),'Live Dataverse queries must be allowed only to their own environment');
  assert(data.includes('builder-preview')&&data.includes('FetchXMLBuilder'));
  assert(!/<script[^>]+src=/i.test(data),'Dataverse edition must be self-contained');
  assert(!/<img[^>]+src="https?:/i.test(data),'Dataverse edition must not load images from external hosts');
