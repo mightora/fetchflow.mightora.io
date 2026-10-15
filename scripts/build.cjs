@@ -14,13 +14,14 @@ const logo=dataAsset('assets/mightora-logo.png',brandFallback),avatar=dataAsset(
 const examples=JSON.parse(read('examples/examples.json'));
 const vendor=read('vendor/jszip.min.js')+'\n'+read('vendor/pptxgen.min.js');
 const scripts=vendor+'\n'+['src/model.js','src/diagrams.js','src/exports.js','src/builder.js','src/app.js'].map(read).join('\n');
-const css=read('src/styles.css');
+const baseCss=read('src/styles.css');
 const document=read('src/index.template.html');
 const hash=s=>`'sha256-${crypto.createHash('sha256').update(s).digest('base64')}'`;
 const patch=`<script>(function(){const original=window.fetch;window.fetch=async function(input,init){const response=await original.call(this,input,init);const target=typeof input==='string'?input:input&&input.url||'';if(/footer\\.ya?ml(?:[?#]|$)/i.test(target)&&response.ok){try{const content=await response.clone().text();const fixed=content.replace(/\\t/g,'  ').replace(/^(\\s{4})(\\S)/gm,'  $2');return new Response(fixed,{status:response.status,statusText:response.statusText,headers:response.headers});}catch{return response;}}return response;};})();</script>`;
 function assemble(offline,dataverse=false){
  let html=document;
- const pre=`window.__OFFLINE__=${offline};window.__DATAVERSE__=${dataverse};window.FETCHXML_EXAMPLES=${JSON.stringify(examples).replace(/</g,'\\u003c')};\n`;
+ const css=baseCss+(dataverse?'\n'+read('src/dataverse-page.css'):'');
+ const pre=`window.__OFFLINE__=${offline};window.__DATAVERSE__=${dataverse};window.__DATAVERSE_PAGE__=${dataverse};window.FETCHXML_EXAMPLES=${JSON.stringify(examples).replace(/</g,'\\u003c')};\n`;
  const app=pre+scripts;
  const escapedApp=app.replace(/<\/script/gi,'<\\/script');
  html=html.replace('/*BUILD_CSS*/',css).replace('<!--SCRIPTS-->',()=>`<script>${escapedApp}</script>`);
@@ -30,12 +31,25 @@ function assemble(offline,dataverse=false){
   // Offline edition must never fetch live CI badges: status is only verifiable online.
   html=html.replace(/<img\s+class="live-badge"[^>]*>/gi,'');
   html=html.replace(/<!--ONLINE_HEADER_START-->[\s\S]*?<!--ONLINE_HEADER_END-->/,'');
-  html=html.replace('<!--OFFLINE_HEADER-->',`<header class="top-fallback"><div class="container"><a href="#workspace" aria-label="Mightora FetchFlow"><img src="${logo}" alt="Mightora" width="180" height="40" class="header-logo" /></a><nav aria-label="Main navigation"><a href="#workspace">Editor</a><a href="#diagrams">Diagrams</a><a href="#exports">Exports</a></nav></div></header>`);
+  const offlineHeader=`<header class="top-fallback"><div class="container"><a href="#workspace" aria-label="Mightora FetchFlow"><img src="${logo}" alt="Mightora" width="180" height="40" class="header-logo" /></a><nav aria-label="Main navigation"><a href="#builder">Build</a><a href="#workspace">Editor</a><a href="#diagrams">Diagrams</a><a href="#exports">Exports</a></nav></div></header>`;
+  const appHeader=dataverse?read('dataverse/page-header.template.html').replace('<!--BRAND_LOGO-->',logo):offlineHeader;
+  html=html.replace('<!--OFFLINE_HEADER-->',appHeader);
   html=html.replace(/<!--ONLINE_FOOTER_START-->[\s\S]*?<!--ONLINE_FOOTER_END-->/,'');
-  html=html.replace('<!--OFFLINE_FOOTER-->',`<footer class="fallback-footer"><div class="container"><strong>FetchFlow by Mightora</strong><p>Offline Edition – No Internet Connection Required · MIT licensed · locally processed.</p></div></footer>`);
+  html=html.replace('<!--OFFLINE_FOOTER-->',dataverse?'':`<footer class="fallback-footer"><div class="container"><strong>FetchFlow by Mightora</strong><p>Offline Edition – No Internet Connection Required · MIT licensed · locally processed.</p></div></footer>`);
   html=html.replace('src="https://techtweedie.github.io/images/author/ian-tweedie-sq2_hu_a380911c6f4726de.png"',`src="${avatar}"`);
   html=html.replace('src="https://raw.githubusercontent.com/TechTweedie/techtweedie.github.io/v2/assets/images/site/main-logo.png"',`src="${tt}"`);
-  html=html.replace('<body>','<body class="offline-mode">');
+  html=html.replace('<body>',dataverse?'<body class="offline-mode dataverse-page">':'<body class="offline-mode">');
+  if(dataverse){
+   // The app supplies its own navigation and chrome. Retain the query builder,
+   // editor, analysis, diagrams and exports, rather than nesting a marketing site.
+   html=html.replace(/<section class="hero">[\s\S]*?<\/section>/,'');
+   html=html.replace(/<mightora-author>[\s\S]*?<\/mightora-author>/,'');
+   html=html.replace(/<section class="badges"[\s\S]*?<\/section>/,'');
+   html=html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/,'');
+   html=html.replace('<title>FetchFlow – Understand Dataverse Queries | Mightora</title>',
+                     '<title>FetchFlow | Model-driven app page | Mightora</title>');
+   html=html.replace(/<div id="offline-status" class="offline-banner" hidden>[\s\S]*?<\/div><\/div>/,'');
+  }
   // CSP includes script/style hashes; forbids connections and all network content.
   const csp=`default-src 'none'; script-src ${hash(escapedApp)}; style-src ${hash(css)}; img-src data:; font-src data:; connect-src 'none'; object-src 'none'; frame-src 'none'; form-action 'none'; base-uri 'none'; manifest-src 'none'`;
   html=html.replace('<!--BUILD_CSP-->',`<meta http-equiv="Content-Security-Policy" content="${csp}" />`);
@@ -49,7 +63,7 @@ function assemble(offline,dataverse=false){
 (async()=>{
  if(process.env.REQUIRE_BRAND_ASSETS==='1' && !has('assets/mightora-logo.png')) throw new Error('Official Mightora logo is required for a production build.');
  const dist=path.join(root,'dist');fs.rmSync(dist,{recursive:true,force:true});fs.mkdirSync(path.join(dist,'offline'),{recursive:true});fs.mkdirSync(path.join(dist,'downloads'),{recursive:true});fs.mkdirSync(path.join(dist,'dataverse'),{recursive:true});
- const online=assemble(false),offline=assemble(true),dataverse=assemble(true,true).replace('Offline Edition – No Internet Connection Required','Dataverse Edition – Local Query Builder');
+ const online=assemble(false),offline=assemble(true),dataverse=assemble(true,true);
  fs.writeFileSync(path.join(dist,'index.html'),online);fs.writeFileSync(path.join(dist,'offline/index.html'),offline);
  fs.writeFileSync(path.join(dist,'dataverse/mightora_fetchflow_builder.html'),dataverse);
  // Form launcher is a small, locally executable HTML web resource. Hash its
