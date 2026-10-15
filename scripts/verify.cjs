@@ -85,7 +85,7 @@ const JSZip=require('../vendor/jszip.min.js');
  const cssHash=data.match(/style-src 'sha256-([^']+)'/);
  assert(cssBlock && cssHash && data.includes('dataverse-page'));
  assert.equal(crypto.createHash('sha256').update(cssBlock[1]).digest('base64'),cssHash[1],'App page CSP style hash must match its embedded CSS');
- assert(data.includes("connect-src 'none'"));
+ assert(data.includes("connect-src 'self'"),'Live Dataverse queries must be allowed only to their own environment');
  assert(data.includes('builder-preview')&&data.includes('FetchXMLBuilder'));
  assert(!/<script[^>]+src=/i.test(data),'Dataverse edition must be self-contained');
  assert(!/<img[^>]+src="https?:/i.test(data),'Dataverse edition must not load images from external hosts');
