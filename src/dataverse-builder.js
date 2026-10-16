@@ -22,7 +22,7 @@ function context(){
   if(!gc||typeof gc.getClientUrl!=='function')return null;
   const url=new URL(gc.getClientUrl());
   if(url.origin!==root.location.origin||url.protocol!=='https:'||
-     !/(?:^|\\/)webresources\\//i.test(decodeURIComponent(root.location.pathname)))return null;
+     !/(?:^|\/)webresources\//i.test(decodeURIComponent(root.location.pathname)))return null;
   return {origin:url.origin};
  }catch{return null;}
 }
