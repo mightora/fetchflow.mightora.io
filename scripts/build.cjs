@@ -145,7 +145,7 @@ function assembleDataverse(){
  const scripts=[read('src/model.js'),read('src/diagrams.js'),read('src/dataverse-builder-model.js'),read('src/dataverse-builder.js')].join('\n');
  const script=scripts.replace(/<\/script/gi,'<\\/script');
  let html=read('dataverse/query-designer.template.html');
- const csp=`default-src 'none'; script-src ${hash(script)}; style-src ${hash(css)}; img-src data:; font-src data:; connect-src 'self'; object-src 'none'; frame-src 'none'; form-action 'none'; base-uri 'none'`;
+ const csp=`default-src 'none'; script-src 'self' ${hash(script)}; style-src ${hash(css)}; img-src data:; font-src data:; connect-src 'self'; object-src 'none'; frame-src 'none'; form-action 'none'; base-uri 'none'`;
  html=html.replace('<!--BUILD_CSP-->',`<meta http-equiv="Content-Security-Policy" content="${csp}">`);
  html=html.replace('/*BUILD_CSS*/',css).replace('/*BUILD_APP*/',()=>script).replace('<!--BRAND_LOGO-->',logo);
  return html;
