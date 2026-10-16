@@ -15,13 +15,15 @@ const selected=()=>node(activeId)||nodes[0];
 const updateStatus=(id,msg,bad=false)=>{const el=$(id);if(el){el.textContent=msg;el.classList.toggle('error',bad);}};
 const option=(value,label)=>{const o=document.createElement('option');o.value=value;o.textContent=label;return o;};
 function context(){
- let host=null;
- try{host=root.Xrm||root.parent?.Xrm||root.top?.Xrm;}catch{}
- if(!host?.WebApi?.online?.retrieveMultipleRecords||!host?.Utility?.getGlobalContext)return null;
+ // Sitemap web-resource pages do not expose Xrm.WebApi or parent.Xrm.
+ // Use Microsoft's supported ClientGlobalContext.js.aspx helper instead.
  try{
-  const url=new URL(host.Utility.getGlobalContext().getClientUrl());
-  if(url.origin!==root.location.origin)return null;
-  return {api:host,origin:url.origin};
+  const gc=typeof root.GetGlobalContext==='function'?root.GetGlobalContext():null;
+  if(!gc||typeof gc.getClientUrl!=='function')return null;
+  const url=new URL(gc.getClientUrl());
+  if(url.origin!==root.location.origin||url.protocol!=='https:'||
+     !/(?:^|\\/)webresources\\//i.test(decodeURIComponent(root.location.pathname)))return null;
+  return {origin:url.origin};
  }catch{return null;}
 }
 async function apiGet(path){
@@ -40,7 +42,7 @@ async function loadTables(){
  if(!origin)return;
  updateStatus('metadata-status','Loading Dataverse table definitions…');
  try{
-  let url='EntityDefinitions?$select=LogicalName,DisplayName,IsPrivate',items=[];
+  let url='EntityDefinitions?$select=LogicalName,DisplayName,EntitySetName,IsPrivate',items=[];
   // Follow continuation links only on the current Dataverse origin.
   for(let page=0;page<10&&url;page++){
    const data=await apiGet(url);
@@ -49,7 +51,7 @@ async function loadTables(){
    if(next){const u=new URL(next,origin);if(u.origin!==origin||!u.pathname.includes('/api/data/v9.2/'))throw Error('Unexpected metadata continuation origin.');url=u.pathname.split('/api/data/v9.2/')[1]+u.search;}
    else url='';
   }
-  tableList=items.filter(t=>nameRx.test(t.LogicalName||'')&&!t.IsPrivate).map(t=>({name:t.LogicalName,label:labels(t.DisplayName)||t.LogicalName})).sort((a,b)=>a.label.localeCompare(b.label));
+  tableList=items.filter(t=>nameRx.test(t.LogicalName||'')&&!t.IsPrivate).map(t=>({name:t.LogicalName,label:labels(t.DisplayName)||t.LogicalName,entitySet:t.EntitySetName})).sort((a,b)=>a.label.localeCompare(b.label));
   $('all-tables').replaceChildren(...tableList.map(t=>option(t.name,t.label)));
   showTables();
   updateStatus('metadata-status',tableList.length+' tables available. Pick one to start.');
@@ -307,9 +309,15 @@ async function execute(){
  $('btn-run').disabled=true;const serial=++resultRun;
  updateStatus('results-status','Executing FetchXML against the current Dataverse environment…');
  try{
-  const result=await xrm.WebApi.online.retrieveMultipleRecords(query.table,'?fetchXml='+query.xml,maxRecords);
+  const entitySet=tableList.find(t=>t.name===query.table)?.entitySet;
+  if(!entitySet||!/^[A-Za-z_][A-Za-z0-9_]*$/.test(entitySet))throw Error('Select a table whose entity-set metadata has loaded.');
+  const target=new URL('/api/data/v9.2/'+entitySet,origin);
+  target.searchParams.set('fetchXml',query.xml);
+  const response=await fetch(target.href,{credentials:'same-origin',headers:{'Accept':'application/json','OData-Version':'4.0','OData-MaxVersion':'4.0','Prefer':'odata.include-annotations="OData.Community.Display.V1.FormattedValue"'}});
+  if(!response.ok){let detail=await response.text();try{detail=JSON.parse(detail).error?.message||detail}catch{}throw Error('Dataverse '+response.status+': '+detail.slice(0,350))}
+  const result=await response.json();
   if(serial!==resultRun)return;
-  const records=(result.entities||[]).slice(0,maxRecords);
+  const records=(result.value||[]).slice(0,maxRecords);
   const columns=Array.from(new Set(records.flatMap(record=>Object.keys(record).filter(key=>!key.startsWith('@')&&!key.includes('@')).slice(0,50)))).slice(0,30);
   const tr=document.createElement('tr');columns.forEach(name=>{const th=document.createElement('th');th.textContent=name;th.scope='col';tr.append(th);});$('results-head').append(tr);
   records.forEach(record=>{const row=document.createElement('tr');columns.forEach(col=>{
@@ -325,7 +333,7 @@ async function execute(){
 function start(){
  initEvents();
  const ctx=context();
- if(ctx){xrm=ctx.api;origin=ctx.origin;$('connection').textContent='● Connected to Dataverse';$('connection').classList.add('ok');$('btn-run').disabled=false;void loadTables();}
+ if(ctx){origin=ctx.origin;$('connection').textContent='● Connected to Dataverse';$('connection').classList.add('ok');$('btn-run').disabled=false;void loadTables();}
  else{$('connection').textContent='Offline preview · no Dataverse';updateStatus('metadata-status','Open the HTML as a model-driven app web resource to browse metadata and execute queries.');}
  renderCanvas();renderFields();updateXML();
  const params=new URLSearchParams(root.location.search);
